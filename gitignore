@@ -1,0 +1,111 @@
+## ------------------------------
+## General Visual Studio ignores
+## ------------------------------
+
+.vs/
+*.user
+*.suo
+*.rsuser
+*.userosscache
+*.sln.docstates
+
+# Mono / Xamarin
+*.userprefs
+
+## ------------------------------
+## Build results
+## ------------------------------
+
+bin/
+obj/
+[Bb]uild/
+[Ll]ogs/
+
+# .NET Core build artifacts
+*.dll
+*.exe
+*.pdb
+*.cache
+*.db
+
+## ------------------------------
+## Visual Studio generated files
+## ------------------------------
+
+*.tlog
+*.lastcodeanalysissucceeded
+*.psess
+*.vsp
+*.vspscc
+*.vssscc
+
+## ------------------------------
+## NuGet
+## ------------------------------
+
+# NuGet Packages
+*.nupkg
+*.snupkg
+packages/
+# NuGet backup files
+*.nupkg.sha512
+
+## ------------------------------
+## MSBuild
+## ------------------------------
+
+*.vscode
+*.unsuccessfulbuild
+project.lock.json
+project.fragment.lock.json
+
+## ------------------------------
+## ASP.NET / Blazor
+## ------------------------------
+
+wwwroot/lib/
+wwwroot/dist/
+node_modules/
+bundleconfig.json
+
+## ------------------------------
+## Rider / Resharper
+## ------------------------------
+
+.idea/
+*.sln.iml
+_ReSharper*/
+*.[Rr]e[Ss]harper
+
+## ------------------------------
+## VSCode settings (if using)
+## ------------------------------
+
+.vscode/
+
+## ------------------------------
+## Other
+## ------------------------------
+
+*.tmp
+*.log
+*.temp
+*.svclog
+*.pid
+*.cache
+
+# Local History (VS Code)
+.history/
+
+# Installer outputs
+*.msi
+*.msix
+*.msm
+*.msp
+*.cab
+
+# Mac system files
+.DS_Store
+
+# Windows thumbs
+Thumbs.db
