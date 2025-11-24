@@ -29,7 +29,14 @@ namespace WpfApp9
         private void OpenSecondWindowButton_Click(object sender, RoutedEventArgs e)
         {
             Window1 window1 = new Window1();
-            window1.Show();
+            window1.ShowDialog(); 
+
+        }
+        private void OpenRegWindowButton_Click(object sender, RoutedEventArgs e)
+        {
+            Reg reg = new Reg();
+            reg.ShowDialog();
+            
         }
     }
 }

@@ -10,7 +10,32 @@
         <Label Content="Список" FontSize="20"  HorizontalAlignment="Left" Margin="306,30,0,0" VerticalAlignment="Top" Height="36" Width="120" RenderTransformOrigin="0.5,0.5">
         </Label>
         <Button Content="Button" HorizontalAlignment="Left" Margin="10,123,0,0" VerticalAlignment="Top" Height="33" Width="115"/>
-        <ListBox d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,176,0,0"/>
+        <TabControl Margin="10,172,10,22">
+            <TabItem Header="Category">
+                <DataGrid x:Name="CategoriesTabGrid" 
+                          AutoGenerateColumns="True" 
+                          IsReadOnly="True"
+                          Margin="5"/>
+            </TabItem>
+            <TabItem Header="Equipment">
+                <DataGrid x:Name="EquipmentTabGrid" 
+          AutoGenerateColumns="True" 
+          IsReadOnly="True"
+          Margin="5"/>
+            </TabItem>
+            <TabItem Header="Employees">
+                <DataGrid x:Name="EmployeesTabGrid" 
+               AutoGenerateColumns="True" 
+               IsReadOnly="True"
+               Margin="5"/>
+            </TabItem>
+            <TabItem Header="WarehouseStock">
+                <DataGrid x:Name="WarehouseStockTabGrid" 
+                 AutoGenerateColumns="True" 
+                 IsReadOnly="True"
+                 Margin="5"/>
+            </TabItem>
+        </TabControl>
 
     </Grid>
 </Window>

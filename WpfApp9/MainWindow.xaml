@@ -8,10 +8,10 @@
         Loaded="Window_Loaded"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <Label Content="Регистрация" FontSize="20" HorizontalAlignment="Left" Margin="317,32,0,0" VerticalAlignment="Top" Width="126" Height="41"/>
-        <Button Content="Вход" HorizontalAlignment="Left" Margin="161,333,0,0" VerticalAlignment="Top" Height="54" Width="100"/>
+        <Label Content="Авторизация" FontSize="20" HorizontalAlignment="Left" Margin="317,32,0,0" VerticalAlignment="Top" Width="143" Height="41"/>
+        <Button Content="Вход" Click="OpenSecondWindowButton_Click" HorizontalAlignment="Left" Margin="161,333,0,0" VerticalAlignment="Top" Height="54" Width="100"/>
         <TextBox HorizontalAlignment="Left" Margin="161,145,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="169" Height="41"/>
-        <Button Content="Зарегестрироваться" HorizontalAlignment="Left" Margin="380,333,0,0" VerticalAlignment="Top" Height="54" Width="123"/>
+        <Button Content="Зарегестрироваться" Click="OpenRegWindowButton_Click" HorizontalAlignment="Left" Margin="380,333,0,0"  VerticalAlignment="Top" Height="54" Width="123"/>
         <TextBlock HorizontalAlignment="Left" Margin="162,186,0,0" TextWrapping="Wrap" Text="Имя:" VerticalAlignment="Top" Width="115"/>
         <TextBlock HorizontalAlignment="Left" Margin="161,250,0,0" TextWrapping="Wrap" Text="Пароль:" VerticalAlignment="Top" Width="115" RenderTransformOrigin="0.596,-0.499"/>
         <PasswordBox HorizontalAlignment="Left" Margin="161,271,0,0" VerticalAlignment="Top" Width="169" Height="38"/>
