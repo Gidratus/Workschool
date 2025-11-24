@@ -91,7 +91,7 @@ namespace WpfApp9
                 var dt = new DataTable();
                 await using var conn = new SqlConnection(ConnectionString);
                 await conn.OpenAsync();
-                string sql = "SELECT * FROM dbo.Employees";
+                string sql = "SELECT EmployeeID,FirstName,LastName,Position,Email,Phone FROM dbo.Employees";
                 await using var cmd = new SqlCommand(sql, conn);
                 await using var reader = await cmd.ExecuteReaderAsync();
                 dt.Load(reader);
