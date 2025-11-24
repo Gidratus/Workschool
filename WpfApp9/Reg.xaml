@@ -9,18 +9,18 @@
     <Grid>
         <Label Content="Регистрация" FontSize="20" HorizontalAlignment="Left" Margin="308,31,0,0" VerticalAlignment="Top" Height="35" Width="137"/>
         <TextBlock HorizontalAlignment="Left" Margin="123,142,0,0" TextWrapping="Wrap" Text="Имя" VerticalAlignment="Top" Height="24" Width="62"/>
-        <TextBox HorizontalAlignment="Left" Margin="123,171,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="136" Height="27"/>
-        <Button Content="Ввод" HorizontalAlignment="Left" Margin="480,289,0,0" VerticalAlignment="Top" Height="49" Width="150"/>
+        <TextBox HorizontalAlignment="Left" x:Name="FirstNameTextBox" Margin="123,171,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="136" Height="27"/>
+        <Button Content="Ввод" x:Name="RegisterTextButton" Click="RegisterButton_Click" HorizontalAlignment="Left" Margin="480,289,0,0" VerticalAlignment="Top" Height="49" Width="150"/>
         <TextBlock HorizontalAlignment="Left" Margin="123,210,0,0" TextWrapping="Wrap" Text="Фамилия" VerticalAlignment="Top" Height="24" Width="62"/>
         <TextBlock HorizontalAlignment="Left" Margin="123,276,0,0" TextWrapping="Wrap" Text="Email" VerticalAlignment="Top" Height="24" Width="62"/>
-        <TextBox HorizontalAlignment="Left" Margin="123,234,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="136" Height="27"/>
-        <TextBox HorizontalAlignment="Left" Margin="123,306,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="136" Height="28"/>
+        <TextBox HorizontalAlignment="Left" x:Name="LastNameTextBox" Margin="123,234,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="136" Height="27"/>
+        <TextBox HorizontalAlignment="Left" x:Name="EmailTextBox" Margin="123,306,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="136" Height="28"/>
         <TextBlock HorizontalAlignment="Left" Margin="283,142,0,0" TextWrapping="Wrap" Text="Номер тел." VerticalAlignment="Top" Height="24" Width="62"/>
         <TextBlock HorizontalAlignment="Left" Margin="283,0,0,0" TextWrapping="Wrap" Text="Пароль" VerticalAlignment="Center" Height="24" Width="62"/>
         <TextBlock HorizontalAlignment="Left" Margin="283,277,0,0" TextWrapping="Wrap" Text="Повторить пароль" VerticalAlignment="Top" Height="24" Width="136"/>
-        <TextBox HorizontalAlignment="Left" Margin="283,171,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="136" Height="27"/>
-        <PasswordBox HorizontalAlignment="Left" Margin="283,234,0,0" VerticalAlignment="Top" Width="136" Height="27"/>
-        <PasswordBox HorizontalAlignment="Left" Margin="283,306,0,0" VerticalAlignment="Top" Width="136" Height="27"/>
+        <TextBox HorizontalAlignment="Left" x:Name="PhoneTextBox" Margin="283,171,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="136" Height="27"/>
+        <PasswordBox HorizontalAlignment="Left" x:Name="PasswordBox" Margin="283,234,0,0" VerticalAlignment="Top" Width="136" Height="27"/>
+        <PasswordBox HorizontalAlignment="Left" x:Name="SecondPasswordBox" Margin="283,306,0,0" VerticalAlignment="Top" Width="136" Height="27"/>
 
     </Grid>
 </Window>
