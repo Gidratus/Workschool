@@ -57,14 +57,15 @@ namespace WpfApp9
             {
                 await using var conn = new SqlConnection(ConnectionString);
                 await conn.OpenAsync();
-                string sql = @"INSERT INTO dbo.Employees (FirstName, LastName, Email, Phone, Password) 
-                              VALUES (@FirstName, @LastName, @Email, @Phone, @Password)";
+                string sql = @"INSERT INTO dbo.Employees (FirstName, LastName, Email, Phone, Password, Position) 
+                              VALUES (@FirstName, @LastName, @Email, @Phone, @Password, @Position)";
                 await using var cmd = new SqlCommand(sql, conn);
                 cmd.Parameters.AddWithValue("@FirstName", FirstNameTextBox.Text.Trim());
                 cmd.Parameters.AddWithValue("@LastName", LastNameTextBox.Text.Trim());
                 cmd.Parameters.AddWithValue("@Email", EmailTextBox.Text.Trim());
                 cmd.Parameters.AddWithValue("@Phone", PhoneTextBox.Text.Trim());
                 cmd.Parameters.AddWithValue("@Password", PasswordBox.Password);
+                cmd.Parameters.AddWithValue("@Position", "Стажер");
                 int rowsAffected = await cmd.ExecuteNonQueryAsync();
                 if (rowsAffected > 0)
                 {
