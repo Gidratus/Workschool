@@ -5,21 +5,76 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp9"
         mc:Ignorable="d"
-        Title="AdminWindow" Height="450" Width="800">
+        Title="Административная Панель" Height="600" Width="900">
     <Grid>
-        <TextBlock   HorizontalAlignment="Left" Margin="231,33,0,0" TextWrapping="Wrap" Text="Административная Панель" FontSize="20" VerticalAlignment="Top" Height="38" Width="278"/>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="500,355,0,0" VerticalAlignment="Top" Height="53" Width="101"/>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="550,277,0,0" VerticalAlignment="Top" Height="55" Width="102"/>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="619,355,0,0" VerticalAlignment="Top" Height="52" Width="97"/>
-        <TextBox HorizontalAlignment="Left" Margin="482,123,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="238" Height="28"/>
-        <TabControl Margin="10,97,344,10">
-            <TabItem Header="TabItem">
-                <Grid Background="#FFE5E5E5"/>
+        <TextBlock HorizontalAlignment="Center" Margin="0,20,0,0" TextWrapping="Wrap" 
+                   Text="Административная Панель" FontSize="24" FontWeight="Bold"
+                   VerticalAlignment="Top" Height="40"/>
+
+        <TabControl Margin="20,70,20,20">
+            <TabItem Header="Управление Категориями" FontSize="14">
+                <Grid Background="#FFF5F5F5">
+                    <DataGrid x:Name="CategoriesDataGrid" 
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              SelectionMode="Single"
+                              Margin="10,10,320,10"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              SelectionChanged="CategoriesDataGrid_SelectionChanged">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Binding="{Binding CategoryID}" Width="60"/>
+                            <DataGridTextColumn Header="Название Категории" Binding="{Binding CategoryName}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <Border BorderBrush="#CCCCCC" BorderThickness="1" Background="White"
+                            Margin="0,10,10,10" Width="300" HorizontalAlignment="Right">
+                        <StackPanel Margin="15">
+                            <TextBlock Text="Редактирование Категории" FontSize="16" FontWeight="Bold" 
+                                       Margin="0,0,0,15"/>
+
+
+                            <TextBlock Text="ID:" Margin="0,5,0,3"/>
+                            <TextBox x:Name="CategoryIdTextBox" IsReadOnly="True" 
+                                     Background="#F0F0F0" Height="25" Margin="0,0,0,10"/>
+
+
+                            <TextBlock Text="Название Категории:" Margin="0,5,0,3"/>
+                            <TextBox x:Name="CategoryNameTextBox" Height="25" Margin="0,0,0,15"/>
+
+
+                            <Button Content="Добавить" Click="AddButton_Click" 
+                                    Height="35" Margin="0,5" FontSize="14"
+                                    Background="#4CAF50" Foreground="White" BorderThickness="0"/>
+                            
+                            <Button Content="Обновить" Click="UpdateButton_Click" 
+                                    Height="35" Margin="0,5" FontSize="14"
+                                    Background="#2196F3" Foreground="White" BorderThickness="0"/>
+                            
+                            <Button Content="Удалить" Click="DeleteButton_Click" 
+                                    Height="35" Margin="0,5" FontSize="14"
+                                    Background="#f44336" Foreground="White" BorderThickness="0"/>
+                            
+                            <Button Content="Очистить поля" Click="ClearButton_Click" 
+                                    Height="35" Margin="0,15,0,5" FontSize="14"
+                                    Background="#9E9E9E" Foreground="White" BorderThickness="0"/>
+                            
+                            <Button Content="Обновить список" Click="RefreshButton_Click" 
+                                    Height="35" Margin="0,5" FontSize="14"
+                                    Background="#FF9800" Foreground="White" BorderThickness="0"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
             </TabItem>
-            <TabItem Header="TabItem">
-                <Grid Background="#FFE5E5E5"/>
+
+            <TabItem Header="Другие настройки" FontSize="14">
+                <Grid Background="#FFF5F5F5">
+                    <TextBlock Text="Дополнительные административные функции будут добавлены здесь" 
+                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                               FontSize="16" Foreground="#888888"/>
+                </Grid>
             </TabItem>
         </TabControl>
-
     </Grid>
 </Window>
