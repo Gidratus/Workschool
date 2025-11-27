@@ -144,6 +144,10 @@ namespace WpfApp9
                     break;
             }
         }
-
+        private void OpenAdminWindowButton_Click(object sender, RoutedEventArgs e)
+        {
+            AdminWindow adminwindow = new AdminWindow();
+            adminwindow.ShowDialog();
+        }
     }
 }

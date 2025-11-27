@@ -9,13 +9,13 @@
     <Grid>
         <Label Content="Список" FontSize="20"  HorizontalAlignment="Left" Margin="306,30,0,0" VerticalAlignment="Top" Height="36" Width="120" RenderTransformOrigin="0.5,0.5">
         </Label>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="10,123,0,0" VerticalAlignment="Top" Height="33" Width="115"/>
-        <TabControl Margin="10,172,10,22">
+        <Button Content="Админ доступ"  Click="OpenAdminWindowButton_Click" HorizontalAlignment="Left" Margin="675,89,0,0" VerticalAlignment="Top" Height="33" Width="115"/>
+        <TabControl Margin="10,110,10,10">
             <TabItem Header="Category">
                 <DataGrid x:Name="CategoriesTabGrid" 
                           AutoGenerateColumns="True" 
                           IsReadOnly="True"
-                          Margin="5"/>
+                          Margin="5,0,5,0" Height="246"/>
             </TabItem>
             <TabItem Header="Equipment">
                 <DataGrid x:Name="EquipmentTabGrid" 
