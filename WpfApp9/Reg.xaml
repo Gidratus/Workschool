@@ -10,7 +10,7 @@
         <Label Content="Регистрация" FontSize="20" HorizontalAlignment="Left" Margin="308,31,0,0" VerticalAlignment="Top" Height="35" Width="137"/>
         <TextBlock HorizontalAlignment="Left" Margin="123,142,0,0" TextWrapping="Wrap" Text="Имя" VerticalAlignment="Top" Height="24" Width="62"/>
         <TextBox HorizontalAlignment="Left" x:Name="FirstNameTextBox" Margin="123,171,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="136" Height="27"/>
-        <Button Content="Ввод" x:Name="RegisterTextButton" Click="RegisterButton_Click" HorizontalAlignment="Left" Margin="480,289,0,0" VerticalAlignment="Top" Height="49" Width="150"/>
+        <Button Content="Ввод" Background="#2196F3" Foreground="White" FontSize="15"   x:Name="RegisterTextButton" Click="RegisterButton_Click" HorizontalAlignment="Left" Margin="480,289,0,0" VerticalAlignment="Top" Height="49" Width="150"/>
         <TextBlock HorizontalAlignment="Left" Margin="123,210,0,0" TextWrapping="Wrap" Text="Фамилия" VerticalAlignment="Top" Height="24" Width="62"/>
         <TextBlock HorizontalAlignment="Left" Margin="123,276,0,0" TextWrapping="Wrap" Text="Email" VerticalAlignment="Top" Height="24" Width="62"/>
         <TextBox HorizontalAlignment="Left" x:Name="LastNameTextBox" Margin="123,234,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="136" Height="27"/>
