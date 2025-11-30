@@ -22,15 +22,35 @@ namespace WpfApp9
         private const string ConnectionString =
             "Server=localhost\\SQLEXPRESS;Database=SchoolWork1;Trusted_Connection=True;TrustServerCertificate=True;";
 
-        public AdminWindow()
+        // Хранение ID текущего пользователя
+        private readonly int _currentEmployeeId;
+
+        /// <summary>
+        /// Конструктор с параметром ID пользователя
+        /// </summary>
+        /// <param name="employeeId">ID авторизованного пользователя</param>
+        public AdminWindow(int employeeId)
         {
             InitializeComponent();
+            _currentEmployeeId = employeeId;
             Loaded += AdminWindow_Loaded;
         }
 
         private async void AdminWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            // Скрываем вкладку Employees для всех пользователей, кроме пользователя с ID = 1
+            if (_currentEmployeeId != 1)
+            {
+                EmployeesTabItem.Visibility = Visibility.Collapsed;
+            }
+            
             await LoadCategoriesAsync();
+            
+            // Загружаем данные Employees только если пользователь имеет доступ
+            if (_currentEmployeeId == 1)
+            {
+                await LoadEmployeesAsync();
+            }
         }
 
         private async Task LoadCategoriesAsync()
@@ -226,6 +246,285 @@ namespace WpfApp9
         {
             CategoryIdTextBox.Clear();
             CategoryNameTextBox.Clear();
+        }
+
+        // ===============================================
+        // Методы для работы с таблицей Employees
+        // ===============================================
+
+        /// <summary>
+        /// Загрузка данных сотрудников из базы данных
+        /// </summary>
+        private async Task LoadEmployeesAsync()
+        {
+            try
+            {
+                var dt = new DataTable();
+                await using var conn = new SqlConnection(ConnectionString);
+                await conn.OpenAsync();
+                string sql = @"SELECT EmployeeID, FirstName, LastName, Position, Email, Phone, Password 
+                              FROM dbo.Employees ORDER BY EmployeeID";
+                await using var cmd = new SqlCommand(sql, conn);
+                await using var reader = await cmd.ExecuteReaderAsync();
+                dt.Load(reader);
+                EmployeesDataGrid.ItemsSource = dt.DefaultView;
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show($"SQL ошибка при загрузке сотрудников: {ex.Message}",
+                    "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при загрузке сотрудников: {ex.Message}",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Обработчик выбора строки в таблице сотрудников
+        /// </summary>
+        private void EmployeesDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (EmployeesDataGrid.SelectedItem != null)
+            {
+                DataRowView row = (DataRowView)EmployeesDataGrid.SelectedItem;
+                EmployeeIdTextBox.Text = row["EmployeeID"].ToString();
+                EmployeeFirstNameTextBox.Text = row["FirstName"].ToString();
+                EmployeeLastNameTextBox.Text = row["LastName"].ToString();
+                EmployeePositionTextBox.Text = row["Position"].ToString();
+                EmployeeEmailTextBox.Text = row["Email"].ToString();
+                EmployeePhoneTextBox.Text = row["Phone"].ToString();
+                EmployeePasswordTextBox.Text = row["Password"].ToString();
+            }
+        }
+
+        /// <summary>
+        /// Добавление нового сотрудника
+        /// </summary>
+        private async void AddEmployeeButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Валидация полей
+            if (string.IsNullOrWhiteSpace(EmployeeFirstNameTextBox.Text))
+            {
+                MessageBox.Show("Пожалуйста, введите имя сотрудника!",
+                    "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(EmployeeLastNameTextBox.Text))
+            {
+                MessageBox.Show("Пожалуйста, введите фамилию сотрудника!",
+                    "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(EmployeePasswordTextBox.Text))
+            {
+                MessageBox.Show("Пожалуйста, введите пароль!",
+                    "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            try
+            {
+                await using var conn = new SqlConnection(ConnectionString);
+                await conn.OpenAsync();
+                string sql = @"INSERT INTO dbo.Employees (FirstName, LastName, Position, Email, Phone, Password) 
+                              VALUES (@FirstName, @LastName, @Position, @Email, @Phone, @Password)";
+                await using var cmd = new SqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@FirstName", EmployeeFirstNameTextBox.Text.Trim());
+                cmd.Parameters.AddWithValue("@LastName", EmployeeLastNameTextBox.Text.Trim());
+                cmd.Parameters.AddWithValue("@Position", 
+                    string.IsNullOrWhiteSpace(EmployeePositionTextBox.Text) ? (object)DBNull.Value : EmployeePositionTextBox.Text.Trim());
+                cmd.Parameters.AddWithValue("@Email", 
+                    string.IsNullOrWhiteSpace(EmployeeEmailTextBox.Text) ? (object)DBNull.Value : EmployeeEmailTextBox.Text.Trim());
+                cmd.Parameters.AddWithValue("@Phone", 
+                    string.IsNullOrWhiteSpace(EmployeePhoneTextBox.Text) ? (object)DBNull.Value : EmployeePhoneTextBox.Text.Trim());
+                cmd.Parameters.AddWithValue("@Password", EmployeePasswordTextBox.Text.Trim());
+
+                int rowsAffected = await cmd.ExecuteNonQueryAsync();
+                if (rowsAffected > 0)
+                {
+                    MessageBox.Show("Сотрудник успешно добавлен!",
+                        "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                    ClearEmployeeFields();
+                    await LoadEmployeesAsync();
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show($"SQL ошибка при добавлении сотрудника: {ex.Message}",
+                    "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при добавлении сотрудника: {ex.Message}",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Обновление данных сотрудника
+        /// </summary>
+        private async void UpdateEmployeeButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(EmployeeIdTextBox.Text))
+            {
+                MessageBox.Show("Пожалуйста, выберите сотрудника для обновления!",
+                    "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(EmployeeFirstNameTextBox.Text))
+            {
+                MessageBox.Show("Пожалуйста, введите имя сотрудника!",
+                    "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(EmployeeLastNameTextBox.Text))
+            {
+                MessageBox.Show("Пожалуйста, введите фамилию сотрудника!",
+                    "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(EmployeePasswordTextBox.Text))
+            {
+                MessageBox.Show("Пожалуйста, введите пароль!",
+                    "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            try
+            {
+                await using var conn = new SqlConnection(ConnectionString);
+                await conn.OpenAsync();
+                string sql = @"UPDATE dbo.Employees 
+                              SET FirstName = @FirstName, LastName = @LastName, 
+                                  Position = @Position, Email = @Email, Phone = @Phone, Password = @Password 
+                              WHERE EmployeeID = @EmployeeID";
+                await using var cmd = new SqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@FirstName", EmployeeFirstNameTextBox.Text.Trim());
+                cmd.Parameters.AddWithValue("@LastName", EmployeeLastNameTextBox.Text.Trim());
+                cmd.Parameters.AddWithValue("@Position", 
+                    string.IsNullOrWhiteSpace(EmployeePositionTextBox.Text) ? (object)DBNull.Value : EmployeePositionTextBox.Text.Trim());
+                cmd.Parameters.AddWithValue("@Email", 
+                    string.IsNullOrWhiteSpace(EmployeeEmailTextBox.Text) ? (object)DBNull.Value : EmployeeEmailTextBox.Text.Trim());
+                cmd.Parameters.AddWithValue("@Phone", 
+                    string.IsNullOrWhiteSpace(EmployeePhoneTextBox.Text) ? (object)DBNull.Value : EmployeePhoneTextBox.Text.Trim());
+                cmd.Parameters.AddWithValue("@Password", EmployeePasswordTextBox.Text.Trim());
+                cmd.Parameters.AddWithValue("@EmployeeID", int.Parse(EmployeeIdTextBox.Text));
+
+                int rowsAffected = await cmd.ExecuteNonQueryAsync();
+                if (rowsAffected > 0)
+                {
+                    MessageBox.Show("Данные сотрудника успешно обновлены!",
+                        "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                    ClearEmployeeFields();
+                    await LoadEmployeesAsync();
+                }
+                else
+                {
+                    MessageBox.Show("Сотрудник не найден!",
+                        "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show($"SQL ошибка при обновлении данных сотрудника: {ex.Message}",
+                    "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при обновлении данных сотрудника: {ex.Message}",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Удаление сотрудника
+        /// </summary>
+        private async void DeleteEmployeeButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(EmployeeIdTextBox.Text))
+            {
+                MessageBox.Show("Пожалуйста, выберите сотрудника для удаления!",
+                    "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var result = MessageBox.Show(
+                $"Вы уверены, что хотите удалить сотрудника '{EmployeeFirstNameTextBox.Text} {EmployeeLastNameTextBox.Text}'?",
+                "Подтверждение удаления",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (result != MessageBoxResult.Yes)
+            {
+                return;
+            }
+
+            try
+            {
+                await using var conn = new SqlConnection(ConnectionString);
+                await conn.OpenAsync();
+                string sql = "DELETE FROM dbo.Employees WHERE EmployeeID = @EmployeeID";
+                await using var cmd = new SqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@EmployeeID", int.Parse(EmployeeIdTextBox.Text));
+                int rowsAffected = await cmd.ExecuteNonQueryAsync();
+                if (rowsAffected > 0)
+                {
+                    MessageBox.Show("Сотрудник успешно удален!",
+                        "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                    ClearEmployeeFields();
+                    await LoadEmployeesAsync();
+                }
+                else
+                {
+                    MessageBox.Show("Сотрудник не найден!",
+                        "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show($"SQL ошибка при удалении сотрудника: {ex.Message}",
+                    "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при удалении сотрудника: {ex.Message}",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Очистка полей формы сотрудника
+        /// </summary>
+        private void ClearEmployeeButton_Click(object sender, RoutedEventArgs e)
+        {
+            ClearEmployeeFields();
+            EmployeesDataGrid.SelectedItem = null;
+        }
+
+        /// <summary>
+        /// Обновление списка сотрудников
+        /// </summary>
+        private async void RefreshEmployeeButton_Click(object sender, RoutedEventArgs e)
+        {
+            await LoadEmployeesAsync();
+            MessageBox.Show("Список сотрудников обновлен!",
+                "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        /// <summary>
+        /// Вспомогательный метод для очистки полей сотрудника
+        /// </summary>
+        private void ClearEmployeeFields()
+        {
+            EmployeeIdTextBox.Clear();
+            EmployeeFirstNameTextBox.Clear();
+            EmployeeLastNameTextBox.Clear();
+            EmployeePositionTextBox.Clear();
+            EmployeeEmailTextBox.Clear();
+            EmployeePhoneTextBox.Clear();
+            EmployeePasswordTextBox.Clear();
         }
     }
 }

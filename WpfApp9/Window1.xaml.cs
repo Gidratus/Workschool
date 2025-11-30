@@ -161,7 +161,8 @@ namespace WpfApp9
         }
         private void OpenAdminWindowButton_Click(object sender, RoutedEventArgs e)
         {
-            AdminWindow adminwindow = new AdminWindow();
+            // Передаем ID текущего пользователя в AdminWindow
+            AdminWindow adminwindow = new AdminWindow(_currentEmployeeId);
             adminwindow.ShowDialog();
         }
     }
