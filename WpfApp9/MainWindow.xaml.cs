@@ -15,6 +15,15 @@ using System.Windows.Shapes;
 namespace WpfApp9
 {
     /// <summary>
+    /// Класс для хранения данных авторизованного пользователя
+    /// </summary>
+    public class UserData
+    {
+        public int EmployeeId { get; set; }
+        public string Position { get; set; }
+    }
+
+    /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
@@ -51,16 +60,16 @@ namespace WpfApp9
                 return;
             }
             
-            // Получаем ID пользователя при авторизации
-            int? employeeId = await AuthenticateUserAsync(
+            // Получаем данные пользователя при авторизации (ID и должность)
+            UserData userData = await AuthenticateUserAsync(
                 FirstnameTextbox.Text.Trim(),
                 LastNameTextBox.Text.Trim(),
                 PasswordTextbox.Password);
 
-            if (employeeId.HasValue)
+            if (userData != null)
             {
-                // Передаем ID пользователя в Window1
-                Window1 window1 = new Window1(employeeId.Value);
+                // Передаем данные пользователя в Window1
+                Window1 window1 = new Window1(userData);
                 window1.ShowDialog();
             }
             else
@@ -70,18 +79,18 @@ namespace WpfApp9
             }
         }
         /// <summary>
-        /// Аутентификация пользователя и получение его ID
+        /// Аутентификация пользователя и получение его данных (ID и должность)
         /// </summary>
-        /// <returns>EmployeeID если авторизация успешна, null если нет</returns>
-        private async Task<int?> AuthenticateUserAsync(string firstName, string lastName, string password)
+        /// <returns>UserData если авторизация успешна, null если нет</returns>
+        private async Task<UserData> AuthenticateUserAsync(string firstName, string lastName, string password)
         {
             try
             {
                 await using var conn = new SqlConnection(ConnectionString);
                 await conn.OpenAsync();
                 
-                // Получаем EmployeeID вместо COUNT(*)
-                string sql = @"SELECT EmployeeID FROM dbo.Employees 
+                // Получаем EmployeeID и Position пользователя
+                string sql = @"SELECT EmployeeID, Position FROM dbo.Employees 
                               WHERE FirstName = @FirstName 
                               AND LastName = @LastName 
                               AND Password = @Password";
@@ -91,12 +100,16 @@ namespace WpfApp9
                 cmd.Parameters.AddWithValue("@LastName", lastName);
                 cmd.Parameters.AddWithValue("@Password", password);
                 
-                var result = await cmd.ExecuteScalarAsync();
+                await using var reader = await cmd.ExecuteReaderAsync();
                 
-                // Если пользователь найден, возвращаем его ID
-                if (result != null && result != DBNull.Value)
+                // Если пользователь найден, возвращаем его данные
+                if (await reader.ReadAsync())
                 {
-                    return Convert.ToInt32(result);
+                    return new UserData
+                    {
+                        EmployeeId = reader.GetInt32(0),
+                        Position = reader.IsDBNull(1) ? "" : reader.GetString(1)
+                    };
                 }
                 
                 return null;

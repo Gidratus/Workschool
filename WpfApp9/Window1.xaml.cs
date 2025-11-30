@@ -25,25 +25,31 @@ namespace WpfApp9
             "Server=localhost\\SQLEXPRESS;Database=SchoolWork1;Trusted_Connection=True;TrustServerCertificate=True;";
         private const string Sql = "select * from dbo.Categories";
         
-        // Хранение ID текущего пользователя
-        private readonly int _currentEmployeeId;
+        // Хранение данных текущего пользователя
+        private readonly UserData _currentUser;
         
         /// <summary>
-        /// Конструктор с параметром ID пользователя
+        /// Конструктор с параметром данных пользователя
         /// </summary>
-        /// <param name="employeeId">ID авторизованного пользователя</param>
-        public Window1(int employeeId)
+        /// <param name="userData">Данные авторизованного пользователя (ID и должность)</param>
+        public Window1(UserData userData)
         {
             InitializeComponent();
-            _currentEmployeeId = employeeId;
+            _currentUser = userData;
             Loaded += Window1_Loaded;
         }
         private async void Window1_Loaded(object sender, RoutedEventArgs e)
         {
             // Скрываем вкладку Employees для всех пользователей, кроме пользователя с ID = 1
-            if (_currentEmployeeId != 1)
+            if (_currentUser.EmployeeId != 1)
             {
                 EmployeesTabItem.Visibility = Visibility.Collapsed;
+            }
+            
+            // Скрываем кнопку "Админ доступ" для стажеров
+            if (_currentUser.Position != null && _currentUser.Position.Equals("Стажер", StringComparison.OrdinalIgnoreCase))
+            {
+                AdminAccessButton.Visibility = Visibility.Collapsed;
             }
             
             await LoadAllTablesAsync();
@@ -162,7 +168,7 @@ namespace WpfApp9
         private void OpenAdminWindowButton_Click(object sender, RoutedEventArgs e)
         {
             // Передаем ID текущего пользователя в AdminWindow
-            AdminWindow adminwindow = new AdminWindow(_currentEmployeeId);
+            AdminWindow adminwindow = new AdminWindow(_currentUser.EmployeeId);
             adminwindow.ShowDialog();
         }
     }
