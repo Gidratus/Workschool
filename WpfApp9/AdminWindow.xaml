@@ -8,7 +8,7 @@
         Title="Административная Панель" Height="600" Width="900">
     <Grid>
         <TextBlock HorizontalAlignment="Center" Margin="0,20,0,0" TextWrapping="Wrap" 
-                   Text="Административная Панель" FontSize="24" FontWeight="Bold"
+                   Text="Панель управления" FontSize="24" FontWeight="Bold"
                    VerticalAlignment="Top" Height="40"/>
 
         <TabControl Margin="20,70,20,20">

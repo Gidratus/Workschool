@@ -9,7 +9,7 @@
     <Grid>
         <Label Content="Список" FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Margin="324,24,0,0" VerticalAlignment="Top" Height="36" Width="94" RenderTransformOrigin="0.5,0.5">
         </Label>
-        <Button Content="Админ доступ"  FontSize="12" Background="#f44336" Foreground="White" Click="OpenAdminWindowButton_Click" HorizontalAlignment="Left" Margin="669,89,0,0" VerticalAlignment="Top" Height="33" Width="109"/>
+        <Button Content="Панель Управления"  FontSize="12" Background="#f44336" Foreground="White" Click="OpenAdminWindowButton_Click" HorizontalAlignment="Left" Margin="660,89,0,0" VerticalAlignment="Top" Height="33" Width="118"/>
         <TabControl Margin="10,110,10,10">
             <TabItem Header="Category">
                 <DataGrid x:Name="CategoriesTabGrid" 
