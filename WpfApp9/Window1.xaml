@@ -23,7 +23,7 @@
           IsReadOnly="True"
           Margin="5"/>
             </TabItem>
-            <TabItem Header="Employees">
+            <TabItem x:Name="EmployeesTabItem" Header="Employees">
                 <DataGrid x:Name="EmployeesTabGrid" 
                AutoGenerateColumns="True" 
                IsReadOnly="True"

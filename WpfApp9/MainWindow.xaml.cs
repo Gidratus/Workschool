@@ -50,14 +50,17 @@ namespace WpfApp9
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-            bool isAuthenticated = await AuthenticateUserAsync(
+            
+            // Получаем ID пользователя при авторизации
+            int? employeeId = await AuthenticateUserAsync(
                 FirstnameTextbox.Text.Trim(),
                 LastNameTextBox.Text.Trim(),
                 PasswordTextbox.Password);
 
-            if (isAuthenticated)
-                {
-                Window1 window1 = new Window1();
+            if (employeeId.HasValue)
+            {
+                // Передаем ID пользователя в Window1
+                Window1 window1 = new Window1(employeeId.Value);
                 window1.ShowDialog();
             }
             else
@@ -65,34 +68,46 @@ namespace WpfApp9
                 MessageBox.Show("ошибка, неверный пароль", "Ошибка входа",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            //Window1 window1 = new Window1();
-            //window1.ShowDialog(); 
-
         }
-        private async Task<bool> AuthenticateUserAsync(string firstName, string lastName, string password)
+        /// <summary>
+        /// Аутентификация пользователя и получение его ID
+        /// </summary>
+        /// <returns>EmployeeID если авторизация успешна, null если нет</returns>
+        private async Task<int?> AuthenticateUserAsync(string firstName, string lastName, string password)
         {
             try
             {
                 await using var conn = new SqlConnection(ConnectionString);
                 await conn.OpenAsync();
-                string sql = @"SELECT COUNT(*) FROM dbo.Employees 
+                
+                // Получаем EmployeeID вместо COUNT(*)
+                string sql = @"SELECT EmployeeID FROM dbo.Employees 
                               WHERE FirstName = @FirstName 
                               AND LastName = @LastName 
                               AND Password = @Password";
+                              
                 await using var cmd = new SqlCommand(sql, conn);
                 cmd.Parameters.AddWithValue("@FirstName", firstName);
                 cmd.Parameters.AddWithValue("@LastName", lastName);
                 cmd.Parameters.AddWithValue("@Password", password);
-                int count = (int)await cmd.ExecuteScalarAsync();
-                return count > 0;
+                
+                var result = await cmd.ExecuteScalarAsync();
+                
+                // Если пользователь найден, возвращаем его ID
+                if (result != null && result != DBNull.Value)
+                {
+                    return Convert.ToInt32(result);
+                }
+                
+                return null;
             }
             catch (SqlException ex)
             {
-                return false;
+                return null;
             }
             catch (Exception ex)
             {
-                return false;
+                return null;
             }
         }
 

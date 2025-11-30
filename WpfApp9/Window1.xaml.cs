@@ -24,13 +24,28 @@ namespace WpfApp9
         private const string ConnectionString = 
             "Server=localhost\\SQLEXPRESS;Database=SchoolWork1;Trusted_Connection=True;TrustServerCertificate=True;";
         private const string Sql = "select * from dbo.Categories";
-        public Window1()
+        
+        // Хранение ID текущего пользователя
+        private readonly int _currentEmployeeId;
+        
+        /// <summary>
+        /// Конструктор с параметром ID пользователя
+        /// </summary>
+        /// <param name="employeeId">ID авторизованного пользователя</param>
+        public Window1(int employeeId)
         {
             InitializeComponent();
+            _currentEmployeeId = employeeId;
             Loaded += Window1_Loaded;
         }
         private async void Window1_Loaded(object sender, RoutedEventArgs e)
         {
+            // Скрываем вкладку Employees для всех пользователей, кроме пользователя с ID = 1
+            if (_currentEmployeeId != 1)
+            {
+                EmployeesTabItem.Visibility = Visibility.Collapsed;
+            }
+            
             await LoadAllTablesAsync();
         }
         private async Task LoadAllTablesAsync()
