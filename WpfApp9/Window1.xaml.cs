@@ -171,5 +171,13 @@ namespace WpfApp9
             AdminWindow adminwindow = new AdminWindow(_currentUser.EmployeeId);
             adminwindow.ShowDialog();
         }
+
+
+        private void OpenProfileButton_Click(object sender, RoutedEventArgs e)
+        {
+            ProfileWindow profileWindow = new ProfileWindow(_currentUser.EmployeeId);
+            profileWindow.Owner = this;
+            profileWindow.ShowDialog();
+        }
     }
 }
