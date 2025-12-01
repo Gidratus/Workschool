@@ -45,6 +45,8 @@ namespace WpfApp9
             }
             
             await LoadCategoriesAsync();
+            await LoadCategoriesForEquipmentComboBoxAsync(); // Загружаем категории в ComboBox для Equipment
+            await LoadEquipmentAsync(); // Загружаем данные оборудования
             
             // Загружаем данные Employees только если пользователь имеет доступ
             if (_currentEmployeeId == 1)
@@ -525,6 +527,311 @@ namespace WpfApp9
             EmployeeEmailTextBox.Clear();
             EmployeePhoneTextBox.Clear();
             EmployeePasswordTextBox.Clear();
+        }
+
+        // ===============================================
+        // Методы для работы с таблицей Equipment
+        // ===============================================
+
+        /// <summary>
+        /// Загрузка категорий в ComboBox для выбора в форме Equipment
+        /// </summary>
+        private async Task LoadCategoriesForEquipmentComboBoxAsync()
+        {
+            try
+            {
+                var dt = new DataTable();
+                await using var conn = new SqlConnection(ConnectionString);
+                await conn.OpenAsync();
+                string sql = "SELECT CategoryID, CategoryName FROM dbo.Categories ORDER BY CategoryName";
+                await using var cmd = new SqlCommand(sql, conn);
+                await using var reader = await cmd.ExecuteReaderAsync();
+                dt.Load(reader);
+                EquipmentCategoryComboBox.ItemsSource = dt.DefaultView;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при загрузке категорий для ComboBox: {ex.Message}",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Загрузка данных оборудования из базы данных
+        /// </summary>
+        private async Task LoadEquipmentAsync()
+        {
+            try
+            {
+                var dt = new DataTable();
+                await using var conn = new SqlConnection(ConnectionString);
+                await conn.OpenAsync();
+                // Загружаем все поля из таблицы Equipment
+                string sql = @"SELECT EquipmentID, EquipmentName, CategoryID, Manufacturer, 
+                              Model, SerialNumber, PurchaseDate, WarrantyUntil 
+                              FROM dbo.Equipment ORDER BY EquipmentID";
+                await using var cmd = new SqlCommand(sql, conn);
+                await using var reader = await cmd.ExecuteReaderAsync();
+                dt.Load(reader);
+                EquipmentDataGrid.ItemsSource = dt.DefaultView;
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show($"SQL ошибка при загрузке оборудования: {ex.Message}",
+                    "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при загрузке оборудования: {ex.Message}",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Обработчик выбора строки в таблице оборудования
+        /// </summary>
+        private void EquipmentDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (EquipmentDataGrid.SelectedItem != null)
+            {
+                DataRowView row = (DataRowView)EquipmentDataGrid.SelectedItem;
+                // Заполняем все поля формы данными из выбранной строки
+                EquipmentIdTextBox.Text = row["EquipmentID"].ToString();
+                EquipmentNameTextBox.Text = row["EquipmentName"].ToString();
+                // Устанавливаем выбранную категорию в ComboBox
+                EquipmentCategoryComboBox.SelectedValue = row["CategoryID"] != DBNull.Value ? row["CategoryID"] : null;
+                EquipmentManufacturerTextBox.Text = row["Manufacturer"] != DBNull.Value ? row["Manufacturer"].ToString() : "";
+                EquipmentModelTextBox.Text = row["Model"] != DBNull.Value ? row["Model"].ToString() : "";
+                EquipmentSerialNumberTextBox.Text = row["SerialNumber"] != DBNull.Value ? row["SerialNumber"].ToString() : "";
+                // Устанавливаем даты в DatePicker
+                EquipmentPurchaseDatePicker.SelectedDate = row["PurchaseDate"] != DBNull.Value 
+                    ? (DateTime?)row["PurchaseDate"] : null;
+                EquipmentWarrantyUntilPicker.SelectedDate = row["WarrantyUntil"] != DBNull.Value 
+                    ? (DateTime?)row["WarrantyUntil"] : null;
+            }
+        }
+
+        /// <summary>
+        /// Добавление нового оборудования
+        /// </summary>
+        private async void AddEquipmentButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Валидация - проверка, что название введено
+            if (string.IsNullOrWhiteSpace(EquipmentNameTextBox.Text))
+            {
+                MessageBox.Show("Пожалуйста, введите название оборудования!",
+                    "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            try
+            {
+                await using var conn = new SqlConnection(ConnectionString);
+                await conn.OpenAsync();
+                // INSERT со всеми полями
+                string sql = @"INSERT INTO dbo.Equipment 
+                              (EquipmentName, CategoryID, Manufacturer, Model, SerialNumber, PurchaseDate, WarrantyUntil) 
+                              VALUES (@EquipmentName, @CategoryID, @Manufacturer, @Model, @SerialNumber, @PurchaseDate, @WarrantyUntil)";
+                await using var cmd = new SqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@EquipmentName", EquipmentNameTextBox.Text.Trim());
+                // CategoryID - берём из ComboBox
+                cmd.Parameters.AddWithValue("@CategoryID", 
+                    EquipmentCategoryComboBox.SelectedValue ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Manufacturer", 
+                    string.IsNullOrWhiteSpace(EquipmentManufacturerTextBox.Text) ? (object)DBNull.Value : EquipmentManufacturerTextBox.Text.Trim());
+                cmd.Parameters.AddWithValue("@Model", 
+                    string.IsNullOrWhiteSpace(EquipmentModelTextBox.Text) ? (object)DBNull.Value : EquipmentModelTextBox.Text.Trim());
+                cmd.Parameters.AddWithValue("@SerialNumber", 
+                    string.IsNullOrWhiteSpace(EquipmentSerialNumberTextBox.Text) ? (object)DBNull.Value : EquipmentSerialNumberTextBox.Text.Trim());
+                cmd.Parameters.AddWithValue("@PurchaseDate", 
+                    EquipmentPurchaseDatePicker.SelectedDate.HasValue ? (object)EquipmentPurchaseDatePicker.SelectedDate.Value : DBNull.Value);
+                cmd.Parameters.AddWithValue("@WarrantyUntil", 
+                    EquipmentWarrantyUntilPicker.SelectedDate.HasValue ? (object)EquipmentWarrantyUntilPicker.SelectedDate.Value : DBNull.Value);
+                
+                int rowsAffected = await cmd.ExecuteNonQueryAsync();
+                if (rowsAffected > 0)
+                {
+                    MessageBox.Show("Оборудование успешно добавлено!",
+                        "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                    ClearEquipmentFields();
+                    await LoadEquipmentAsync();
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show($"SQL ошибка при добавлении оборудования: {ex.Message}",
+                    "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при добавлении оборудования: {ex.Message}",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Обновление данных оборудования
+        /// </summary>
+        private async void UpdateEquipmentButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Проверка, что выбрана запись для обновления
+            if (string.IsNullOrWhiteSpace(EquipmentIdTextBox.Text))
+            {
+                MessageBox.Show("Пожалуйста, выберите оборудование для обновления!",
+                    "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            // Проверка, что название введено
+            if (string.IsNullOrWhiteSpace(EquipmentNameTextBox.Text))
+            {
+                MessageBox.Show("Пожалуйста, введите название оборудования!",
+                    "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            try
+            {
+                await using var conn = new SqlConnection(ConnectionString);
+                await conn.OpenAsync();
+                // UPDATE со всеми полями
+                string sql = @"UPDATE dbo.Equipment SET 
+                              EquipmentName = @EquipmentName, 
+                              CategoryID = @CategoryID, 
+                              Manufacturer = @Manufacturer, 
+                              Model = @Model, 
+                              SerialNumber = @SerialNumber, 
+                              PurchaseDate = @PurchaseDate, 
+                              WarrantyUntil = @WarrantyUntil 
+                              WHERE EquipmentID = @EquipmentID";
+                await using var cmd = new SqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@EquipmentName", EquipmentNameTextBox.Text.Trim());
+                // CategoryID - берём из ComboBox
+                cmd.Parameters.AddWithValue("@CategoryID", 
+                    EquipmentCategoryComboBox.SelectedValue ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Manufacturer", 
+                    string.IsNullOrWhiteSpace(EquipmentManufacturerTextBox.Text) ? (object)DBNull.Value : EquipmentManufacturerTextBox.Text.Trim());
+                cmd.Parameters.AddWithValue("@Model", 
+                    string.IsNullOrWhiteSpace(EquipmentModelTextBox.Text) ? (object)DBNull.Value : EquipmentModelTextBox.Text.Trim());
+                cmd.Parameters.AddWithValue("@SerialNumber", 
+                    string.IsNullOrWhiteSpace(EquipmentSerialNumberTextBox.Text) ? (object)DBNull.Value : EquipmentSerialNumberTextBox.Text.Trim());
+                cmd.Parameters.AddWithValue("@PurchaseDate", 
+                    EquipmentPurchaseDatePicker.SelectedDate.HasValue ? (object)EquipmentPurchaseDatePicker.SelectedDate.Value : DBNull.Value);
+                cmd.Parameters.AddWithValue("@WarrantyUntil", 
+                    EquipmentWarrantyUntilPicker.SelectedDate.HasValue ? (object)EquipmentWarrantyUntilPicker.SelectedDate.Value : DBNull.Value);
+                cmd.Parameters.AddWithValue("@EquipmentID", int.Parse(EquipmentIdTextBox.Text));
+                
+                int rowsAffected = await cmd.ExecuteNonQueryAsync();
+                if (rowsAffected > 0)
+                {
+                    MessageBox.Show("Оборудование успешно обновлено!",
+                        "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                    ClearEquipmentFields();
+                    await LoadEquipmentAsync();
+                }
+                else
+                {
+                    MessageBox.Show("Оборудование не найдено!",
+                        "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show($"SQL ошибка при обновлении оборудования: {ex.Message}",
+                    "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при обновлении оборудования: {ex.Message}",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Удаление оборудования
+        /// </summary>
+        private async void DeleteEquipmentButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Проверка, что выбрана запись для удаления
+            if (string.IsNullOrWhiteSpace(EquipmentIdTextBox.Text))
+            {
+                MessageBox.Show("Пожалуйста, выберите оборудование для удаления!",
+                    "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            // Подтверждение удаления
+            var result = MessageBox.Show(
+                $"Вы уверены, что хотите удалить оборудование '{EquipmentNameTextBox.Text}'?",
+                "Подтверждение удаления",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (result != MessageBoxResult.Yes)
+            {
+                return;
+            }
+            try
+            {
+                await using var conn = new SqlConnection(ConnectionString);
+                await conn.OpenAsync();
+                string sql = "DELETE FROM dbo.Equipment WHERE EquipmentID = @EquipmentID";
+                await using var cmd = new SqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@EquipmentID", int.Parse(EquipmentIdTextBox.Text));
+                int rowsAffected = await cmd.ExecuteNonQueryAsync();
+                if (rowsAffected > 0)
+                {
+                    MessageBox.Show("Оборудование успешно удалено!",
+                        "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                    ClearEquipmentFields();
+                    await LoadEquipmentAsync();
+                }
+                else
+                {
+                    MessageBox.Show("Оборудование не найдено!",
+                        "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show($"SQL ошибка при удалении оборудования: {ex.Message}",
+                    "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при удалении оборудования: {ex.Message}",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Очистка полей формы оборудования
+        /// </summary>
+        private void ClearEquipmentButton_Click(object sender, RoutedEventArgs e)
+        {
+            ClearEquipmentFields();
+            EquipmentDataGrid.SelectedItem = null;
+        }
+
+        /// <summary>
+        /// Обновление списка оборудования
+        /// </summary>
+        private async void RefreshEquipmentButton_Click(object sender, RoutedEventArgs e)
+        {
+            await LoadEquipmentAsync();
+            MessageBox.Show("Список оборудования обновлен!",
+                "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        /// <summary>
+        /// Вспомогательный метод для очистки полей оборудования
+        /// </summary>
+        private void ClearEquipmentFields()
+        {
+            EquipmentIdTextBox.Clear();
+            EquipmentNameTextBox.Clear();
+            EquipmentCategoryComboBox.SelectedIndex = -1; // Сбрасываем выбор в ComboBox
+            EquipmentManufacturerTextBox.Clear();
+            EquipmentModelTextBox.Clear();
+            EquipmentSerialNumberTextBox.Clear();
+            EquipmentPurchaseDatePicker.SelectedDate = null;
+            EquipmentWarrantyUntilPicker.SelectedDate = null;
         }
     }
 }

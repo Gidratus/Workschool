@@ -140,6 +140,98 @@
                 </Grid>
             </TabItem>
 
+            <!-- Вкладка для управления оборудованием -->
+            <TabItem Header="Управление Equipment" FontSize="14">
+                <Grid Background="#FFF5F5F5">
+                    <!-- Таблица с оборудованием -->
+                    <DataGrid x:Name="EquipmentDataGrid" 
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              SelectionMode="Single"
+                              Margin="10,10,380,10"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              SelectionChanged="EquipmentDataGrid_SelectionChanged">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Binding="{Binding EquipmentID}" Width="40"/>
+                            <DataGridTextColumn Header="Название" Binding="{Binding EquipmentName}" Width="120"/>
+                            <DataGridTextColumn Header="Категория" Binding="{Binding CategoryID}" Width="70"/>
+                            <DataGridTextColumn Header="Производитель" Binding="{Binding Manufacturer}" Width="100"/>
+                            <DataGridTextColumn Header="Модель" Binding="{Binding Model}" Width="80"/>
+                            <DataGridTextColumn Header="Серийный №" Binding="{Binding SerialNumber}" Width="100"/>
+                            <DataGridTextColumn Header="Дата покупки" Binding="{Binding PurchaseDate, StringFormat=\{0:dd.MM.yyyy\}}" Width="90"/>
+                            <DataGridTextColumn Header="Гарантия до" Binding="{Binding WarrantyUntil, StringFormat=\{0:dd.MM.yyyy\}}" Width="90"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <!-- Панель редактирования оборудования -->
+                    <Border BorderBrush="#CCCCCC" BorderThickness="1" Background="White"
+                            Margin="0,10,10,10" Width="360" HorizontalAlignment="Right">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="15">
+                                <TextBlock Text="Редактирование Equipment" FontSize="16" FontWeight="Bold" 
+                                           Margin="0,0,0,15"/>
+
+                                <!-- Поле ID (только для чтения) -->
+                                <TextBlock Text="ID:" Margin="0,5,0,3"/>
+                                <TextBox x:Name="EquipmentIdTextBox" IsReadOnly="True" 
+                                         Background="#F0F0F0" Height="25" Margin="0,0,0,8"/>
+
+                                <!-- Поле названия оборудования -->
+                                <TextBlock Text="Название оборудования:" Margin="0,5,0,3"/>
+                                <TextBox x:Name="EquipmentNameTextBox" Height="25" Margin="0,0,0,8"/>
+
+                                <!-- Поле категории - выпадающий список -->
+                                <TextBlock Text="Категория:" Margin="0,5,0,3"/>
+                                <ComboBox x:Name="EquipmentCategoryComboBox" Height="25" Margin="0,0,0,8"
+                                          DisplayMemberPath="CategoryName" SelectedValuePath="CategoryID"/>
+
+                                <!-- Поле производителя -->
+                                <TextBlock Text="Производитель:" Margin="0,5,0,3"/>
+                                <TextBox x:Name="EquipmentManufacturerTextBox" Height="25" Margin="0,0,0,8"/>
+
+                                <!-- Поле модели -->
+                                <TextBlock Text="Модель:" Margin="0,5,0,3"/>
+                                <TextBox x:Name="EquipmentModelTextBox" Height="25" Margin="0,0,0,8"/>
+
+                                <!-- Поле серийного номера -->
+                                <TextBlock Text="Серийный номер:" Margin="0,5,0,3"/>
+                                <TextBox x:Name="EquipmentSerialNumberTextBox" Height="25" Margin="0,0,0,8"/>
+
+                                <!-- Поле даты покупки -->
+                                <TextBlock Text="Дата покупки:" Margin="0,5,0,3"/>
+                                <DatePicker x:Name="EquipmentPurchaseDatePicker" Height="25" Margin="0,0,0,8"/>
+
+                                <!-- Поле гарантии -->
+                                <TextBlock Text="Гарантия до:" Margin="0,5,0,3"/>
+                                <DatePicker x:Name="EquipmentWarrantyUntilPicker" Height="25" Margin="0,0,0,15"/>
+
+                                <!-- Кнопки управления -->
+                                <Button Content="Добавить" Click="AddEquipmentButton_Click" 
+                                        Height="35" Margin="0,5" FontSize="14"
+                                        Background="#4CAF50" Foreground="White" BorderThickness="0"/>
+                                
+                                <Button Content="Обновить" Click="UpdateEquipmentButton_Click" 
+                                        Height="35" Margin="0,5" FontSize="14"
+                                        Background="#2196F3" Foreground="White" BorderThickness="0"/>
+                                
+                                <Button Content="Удалить" Click="DeleteEquipmentButton_Click" 
+                                        Height="35" Margin="0,5" FontSize="14"
+                                        Background="#f44336" Foreground="White" BorderThickness="0"/>
+                                
+                                <Button Content="Очистить поля" Click="ClearEquipmentButton_Click" 
+                                        Height="35" Margin="0,15,0,5" FontSize="14"
+                                        Background="#9E9E9E" Foreground="White" BorderThickness="0"/>
+                                
+                                <Button Content="Обновить список" Click="RefreshEquipmentButton_Click" 
+                                        Height="35" Margin="0,5" FontSize="14"
+                                        Background="#FF9800" Foreground="White" BorderThickness="0"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Border>
+                </Grid>
+            </TabItem>
+
             <TabItem Header="Другие настройки" FontSize="14">
                 <Grid Background="#FFF5F5F5">
                     <TextBlock Text="Дополнительные административные функции будут добавлены здесь" 
