@@ -21,8 +21,7 @@ namespace WpfApp9
     /// </summary>
     public partial class Reg : Window
     {
-        private const string ConnectionString =
-            "Server=localhost\\SQLEXPRESS;Database=SchoolWork1;Trusted_Connection=True;TrustServerCertificate=True;";
+        private const string ConnectionString = App.ConnectionString;
 
         public Reg()
         {

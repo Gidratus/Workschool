@@ -19,8 +19,7 @@ namespace WpfApp9
 
     public partial class AdminWindow : Window
     {
-        private const string ConnectionString =
-            "Server=localhost\\SQLEXPRESS;Database=SchoolWork1;Trusted_Connection=True;TrustServerCertificate=True;";
+        private const string ConnectionString = App.ConnectionString;
 
         // Хранение ID текущего пользователя
         private readonly int _currentEmployeeId;

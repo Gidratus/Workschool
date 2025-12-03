@@ -28,8 +28,7 @@ namespace WpfApp9
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const string ConnectionString =
-           "Server=localhost\\SQLEXPRESS;Database=SchoolWork1;Trusted_Connection=True;TrustServerCertificate=True;";
+        private const string ConnectionString = App.ConnectionString;
         private const string Sql = "select * from dbo.Categories";
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
