@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp9"
         mc:Ignorable="d"
-        Title="Мой профиль" Height="400" Width="400" 
+        Title="Мой профиль" Height="500" Width="400" 
         WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
     <Grid Background="#FFF5F5F5">
         <StackPanel Margin="30">
