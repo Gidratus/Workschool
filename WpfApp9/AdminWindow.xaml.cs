@@ -47,6 +47,12 @@ namespace WpfApp9
             await LoadCategoriesForEquipmentComboBoxAsync(); // Загружаем категории в ComboBox для Equipment
             await LoadEquipmentAsync(); // Загружаем данные оборудования
             
+            // Загружаем данные для вкладки движений оборудования
+            await LoadEquipmentForMovementComboBoxAsync();
+            await LoadSuppliersForMovementComboBoxAsync();
+            await LoadEmployeesForMovementComboBoxAsync();
+            await LoadMovementAsync();
+            
             // Загружаем данные Employees только если пользователь имеет доступ
             if (_currentEmployeeId == 1)
             {
@@ -831,6 +837,430 @@ namespace WpfApp9
             EquipmentSerialNumberTextBox.Clear();
             EquipmentPurchaseDatePicker.SelectedDate = null;
             EquipmentWarrantyUntilPicker.SelectedDate = null;
+        }
+
+        // ===============================================
+        // Методы для работы с таблицей EquipmentMovement
+        // ===============================================
+
+        /// <summary>
+        /// Загрузка оборудования в ComboBox для формы движений
+        /// </summary>
+        private async Task LoadEquipmentForMovementComboBoxAsync()
+        {
+            try
+            {
+                var dt = new DataTable();
+                await using var conn = new SqlConnection(ConnectionString);
+                await conn.OpenAsync();
+                string sql = "SELECT EquipmentID, EquipmentName FROM dbo.Equipment ORDER BY EquipmentName";
+                await using var cmd = new SqlCommand(sql, conn);
+                await using var reader = await cmd.ExecuteReaderAsync();
+                dt.Load(reader);
+                MovementEquipmentComboBox.ItemsSource = dt.DefaultView;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при загрузке оборудования для ComboBox: {ex.Message}",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Загрузка поставщиков в ComboBox для формы движений
+        /// </summary>
+        private async Task LoadSuppliersForMovementComboBoxAsync()
+        {
+            try
+            {
+                var dt = new DataTable();
+                await using var conn = new SqlConnection(ConnectionString);
+                await conn.OpenAsync();
+                string sql = "SELECT SupplierID, SupplierName FROM dbo.Suppliers ORDER BY SupplierName";
+                await using var cmd = new SqlCommand(sql, conn);
+                await using var reader = await cmd.ExecuteReaderAsync();
+                dt.Load(reader);
+                MovementSupplierComboBox.ItemsSource = dt.DefaultView;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при загрузке поставщиков для ComboBox: {ex.Message}",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Загрузка сотрудников в ComboBox для формы движений
+        /// </summary>
+        private async Task LoadEmployeesForMovementComboBoxAsync()
+        {
+            try
+            {
+                var dt = new DataTable();
+                await using var conn = new SqlConnection(ConnectionString);
+                await conn.OpenAsync();
+                // Объединяем имя и фамилию для отображения
+                string sql = @"SELECT EmployeeID, FirstName + ' ' + LastName AS FullName 
+                              FROM dbo.Employees ORDER BY LastName, FirstName";
+                await using var cmd = new SqlCommand(sql, conn);
+                await using var reader = await cmd.ExecuteReaderAsync();
+                dt.Load(reader);
+                MovementEmployeeComboBox.ItemsSource = dt.DefaultView;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при загрузке сотрудников для ComboBox: {ex.Message}",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Загрузка данных движений оборудования из базы данных
+        /// </summary>
+        private async Task LoadMovementAsync()
+        {
+            try
+            {
+                var dt = new DataTable();
+                await using var conn = new SqlConnection(ConnectionString);
+                await conn.OpenAsync();
+                // Загружаем движения с JOIN для получения имен оборудования, поставщика и сотрудника
+                string sql = @"SELECT m.MovementID, m.EquipmentID, e.EquipmentName, 
+                              m.MovementDate, m.Quantity, m.MovementType, 
+                              m.SupplierID, s.SupplierName,
+                              m.EmployeeID, emp.FirstName + ' ' + emp.LastName AS EmployeeName,
+                              m.Notes
+                              FROM dbo.EquipmentMovement m
+                              LEFT JOIN dbo.Equipment e ON m.EquipmentID = e.EquipmentID
+                              LEFT JOIN dbo.Suppliers s ON m.SupplierID = s.SupplierID
+                              LEFT JOIN dbo.Employees emp ON m.EmployeeID = emp.EmployeeID
+                              ORDER BY m.MovementID DESC";
+                await using var cmd = new SqlCommand(sql, conn);
+                await using var reader = await cmd.ExecuteReaderAsync();
+                dt.Load(reader);
+                MovementDataGrid.ItemsSource = dt.DefaultView;
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show($"SQL ошибка при загрузке движений: {ex.Message}",
+                    "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при загрузке движений: {ex.Message}",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Обработчик выбора строки в таблице движений
+        /// </summary>
+        private void MovementDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (MovementDataGrid.SelectedItem != null)
+            {
+                DataRowView row = (DataRowView)MovementDataGrid.SelectedItem;
+                // Заполняем все поля формы данными из выбранной строки
+                MovementIdTextBox.Text = row["MovementID"].ToString();
+                // Устанавливаем оборудование в ComboBox
+                MovementEquipmentComboBox.SelectedValue = row["EquipmentID"] != DBNull.Value ? row["EquipmentID"] : null;
+                // Устанавливаем дату
+                MovementDatePicker.SelectedDate = row["MovementDate"] != DBNull.Value 
+                    ? (DateTime?)row["MovementDate"] : null;
+                // Количество
+                MovementQuantityTextBox.Text = row["Quantity"] != DBNull.Value ? row["Quantity"].ToString() : "";
+                // Устанавливаем тип движения в ComboBox
+                string movementType = row["MovementType"]?.ToString() ?? "";
+                foreach (ComboBoxItem item in MovementTypeComboBox.Items)
+                {
+                    if (item.Content?.ToString() == movementType)
+                    {
+                        MovementTypeComboBox.SelectedItem = item;
+                        break;
+                    }
+                }
+                // Поставщик
+                MovementSupplierComboBox.SelectedValue = row["SupplierID"] != DBNull.Value ? row["SupplierID"] : null;
+                // Сотрудник
+                MovementEmployeeComboBox.SelectedValue = row["EmployeeID"] != DBNull.Value ? row["EmployeeID"] : null;
+                // Примечания
+                MovementNotesTextBox.Text = row["Notes"] != DBNull.Value ? row["Notes"].ToString() : "";
+            }
+        }
+
+        /// <summary>
+        /// Добавление нового движения оборудования
+        /// </summary>
+        private async void AddMovementButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Валидация - проверка обязательных полей
+            if (MovementEquipmentComboBox.SelectedValue == null)
+            {
+                MessageBox.Show("Пожалуйста, выберите оборудование!",
+                    "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (!MovementDatePicker.SelectedDate.HasValue)
+            {
+                MessageBox.Show("Пожалуйста, выберите дату движения!",
+                    "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (MovementTypeComboBox.SelectedItem == null)
+            {
+                MessageBox.Show("Пожалуйста, выберите тип движения!",
+                    "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // Проверка количества на число
+            int? quantity = null;
+            if (!string.IsNullOrWhiteSpace(MovementQuantityTextBox.Text))
+            {
+                if (!int.TryParse(MovementQuantityTextBox.Text, out int parsedQuantity))
+                {
+                    MessageBox.Show("Количество должно быть целым числом!",
+                        "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                quantity = parsedQuantity;
+            }
+
+            try
+            {
+                await using var conn = new SqlConnection(ConnectionString);
+                await conn.OpenAsync();
+                // INSERT со всеми полями
+                string sql = @"INSERT INTO dbo.EquipmentMovement 
+                              (EquipmentID, MovementDate, Quantity, MovementType, SupplierID, Notes, EmployeeID) 
+                              VALUES (@EquipmentID, @MovementDate, @Quantity, @MovementType, @SupplierID, @Notes, @EmployeeID)";
+                await using var cmd = new SqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@EquipmentID", MovementEquipmentComboBox.SelectedValue);
+                cmd.Parameters.AddWithValue("@MovementDate", MovementDatePicker.SelectedDate.Value);
+                cmd.Parameters.AddWithValue("@Quantity", quantity.HasValue ? (object)quantity.Value : DBNull.Value);
+                // Получаем текст выбранного типа движения
+                string movementType = ((ComboBoxItem)MovementTypeComboBox.SelectedItem).Content.ToString();
+                cmd.Parameters.AddWithValue("@MovementType", movementType);
+                cmd.Parameters.AddWithValue("@SupplierID", 
+                    MovementSupplierComboBox.SelectedValue ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Notes", 
+                    string.IsNullOrWhiteSpace(MovementNotesTextBox.Text) ? (object)DBNull.Value : MovementNotesTextBox.Text.Trim());
+                cmd.Parameters.AddWithValue("@EmployeeID", 
+                    MovementEmployeeComboBox.SelectedValue ?? DBNull.Value);
+                
+                int rowsAffected = await cmd.ExecuteNonQueryAsync();
+                if (rowsAffected > 0)
+                {
+                    MessageBox.Show("Движение оборудования успешно добавлено!",
+                        "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                    ClearMovementFields();
+                    await LoadMovementAsync();
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show($"SQL ошибка при добавлении движения: {ex.Message}",
+                    "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при добавлении движения: {ex.Message}",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Обновление данных движения оборудования
+        /// </summary>
+        private async void UpdateMovementButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Проверка, что выбрана запись для обновления
+            if (string.IsNullOrWhiteSpace(MovementIdTextBox.Text))
+            {
+                MessageBox.Show("Пожалуйста, выберите движение для обновления!",
+                    "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            // Валидация обязательных полей
+            if (MovementEquipmentComboBox.SelectedValue == null)
+            {
+                MessageBox.Show("Пожалуйста, выберите оборудование!",
+                    "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (!MovementDatePicker.SelectedDate.HasValue)
+            {
+                MessageBox.Show("Пожалуйста, выберите дату движения!",
+                    "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (MovementTypeComboBox.SelectedItem == null)
+            {
+                MessageBox.Show("Пожалуйста, выберите тип движения!",
+                    "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // Проверка количества на число
+            int? quantity = null;
+            if (!string.IsNullOrWhiteSpace(MovementQuantityTextBox.Text))
+            {
+                if (!int.TryParse(MovementQuantityTextBox.Text, out int parsedQuantity))
+                {
+                    MessageBox.Show("Количество должно быть целым числом!",
+                        "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                quantity = parsedQuantity;
+            }
+
+            try
+            {
+                await using var conn = new SqlConnection(ConnectionString);
+                await conn.OpenAsync();
+                // UPDATE со всеми полями
+                string sql = @"UPDATE dbo.EquipmentMovement SET 
+                              EquipmentID = @EquipmentID, 
+                              MovementDate = @MovementDate, 
+                              Quantity = @Quantity, 
+                              MovementType = @MovementType, 
+                              SupplierID = @SupplierID, 
+                              Notes = @Notes,
+                              EmployeeID = @EmployeeID
+                              WHERE MovementID = @MovementID";
+                await using var cmd = new SqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@EquipmentID", MovementEquipmentComboBox.SelectedValue);
+                cmd.Parameters.AddWithValue("@MovementDate", MovementDatePicker.SelectedDate.Value);
+                cmd.Parameters.AddWithValue("@Quantity", quantity.HasValue ? (object)quantity.Value : DBNull.Value);
+                // Получаем текст выбранного типа движения
+                string movementType = ((ComboBoxItem)MovementTypeComboBox.SelectedItem).Content.ToString();
+                cmd.Parameters.AddWithValue("@MovementType", movementType);
+                cmd.Parameters.AddWithValue("@SupplierID", 
+                    MovementSupplierComboBox.SelectedValue ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Notes", 
+                    string.IsNullOrWhiteSpace(MovementNotesTextBox.Text) ? (object)DBNull.Value : MovementNotesTextBox.Text.Trim());
+                cmd.Parameters.AddWithValue("@EmployeeID", 
+                    MovementEmployeeComboBox.SelectedValue ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@MovementID", int.Parse(MovementIdTextBox.Text));
+                
+                int rowsAffected = await cmd.ExecuteNonQueryAsync();
+                if (rowsAffected > 0)
+                {
+                    MessageBox.Show("Движение оборудования успешно обновлено!",
+                        "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                    ClearMovementFields();
+                    await LoadMovementAsync();
+                }
+                else
+                {
+                    MessageBox.Show("Движение не найдено!",
+                        "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show($"SQL ошибка при обновлении движения: {ex.Message}",
+                    "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при обновлении движения: {ex.Message}",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Удаление движения оборудования
+        /// </summary>
+        private async void DeleteMovementButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Проверка, что выбрана запись для удаления
+            if (string.IsNullOrWhiteSpace(MovementIdTextBox.Text))
+            {
+                MessageBox.Show("Пожалуйста, выберите движение для удаления!",
+                    "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            // Подтверждение удаления
+            var result = MessageBox.Show(
+                "Вы уверены, что хотите удалить это движение оборудования?",
+                "Подтверждение удаления",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (result != MessageBoxResult.Yes)
+            {
+                return;
+            }
+            try
+            {
+                await using var conn = new SqlConnection(ConnectionString);
+                await conn.OpenAsync();
+                string sql = "DELETE FROM dbo.EquipmentMovement WHERE MovementID = @MovementID";
+                await using var cmd = new SqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@MovementID", int.Parse(MovementIdTextBox.Text));
+                int rowsAffected = await cmd.ExecuteNonQueryAsync();
+                if (rowsAffected > 0)
+                {
+                    MessageBox.Show("Движение оборудования успешно удалено!",
+                        "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                    ClearMovementFields();
+                    await LoadMovementAsync();
+                }
+                else
+                {
+                    MessageBox.Show("Движение не найдено!",
+                        "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show($"SQL ошибка при удалении движения: {ex.Message}",
+                    "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при удалении движения: {ex.Message}",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Очистка полей формы движений
+        /// </summary>
+        private void ClearMovementButton_Click(object sender, RoutedEventArgs e)
+        {
+            ClearMovementFields();
+            MovementDataGrid.SelectedItem = null;
+        }
+
+        /// <summary>
+        /// Обновление списка движений
+        /// </summary>
+        private async void RefreshMovementButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Обновляем также ComboBox-ы на случай добавления нового оборудования/поставщиков/сотрудников
+            await LoadEquipmentForMovementComboBoxAsync();
+            await LoadSuppliersForMovementComboBoxAsync();
+            await LoadEmployeesForMovementComboBoxAsync();
+            await LoadMovementAsync();
+            MessageBox.Show("Список движений оборудования обновлен!",
+                "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        /// <summary>
+        /// Вспомогательный метод для очистки полей движений
+        /// </summary>
+        private void ClearMovementFields()
+        {
+            MovementIdTextBox.Clear();
+            MovementEquipmentComboBox.SelectedIndex = -1;
+            MovementDatePicker.SelectedDate = null;
+            MovementQuantityTextBox.Clear();
+            MovementTypeComboBox.SelectedIndex = -1;
+            MovementSupplierComboBox.SelectedIndex = -1;
+            MovementEmployeeComboBox.SelectedIndex = -1;
+            MovementNotesTextBox.Clear();
         }
     }
 }

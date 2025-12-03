@@ -232,6 +232,107 @@
                 </Grid>
             </TabItem>
 
+            <!-- Вкладка для управления движениями оборудования -->
+            <TabItem Header="Движения оборудования" FontSize="14">
+                <Grid Background="#FFF5F5F5">
+                    <!-- Таблица с движениями оборудования -->
+                    <DataGrid x:Name="MovementDataGrid" 
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              SelectionMode="Single"
+                              Margin="10,10,380,10"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              SelectionChanged="MovementDataGrid_SelectionChanged">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Binding="{Binding MovementID}" Width="40"/>
+                            <DataGridTextColumn Header="Оборудование" Binding="{Binding EquipmentName}" Width="120"/>
+                            <DataGridTextColumn Header="Дата" Binding="{Binding MovementDate, StringFormat=\{0:dd.MM.yyyy\}}" Width="90"/>
+                            <DataGridTextColumn Header="Кол-во" Binding="{Binding Quantity}" Width="60"/>
+                            <DataGridTextColumn Header="Тип движения" Binding="{Binding MovementType}" Width="100"/>
+                            <DataGridTextColumn Header="Поставщик" Binding="{Binding SupplierName}" Width="100"/>
+                            <DataGridTextColumn Header="Сотрудник" Binding="{Binding EmployeeName}" Width="100"/>
+                            <DataGridTextColumn Header="Примечания" Binding="{Binding Notes}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <!-- Панель редактирования движений -->
+                    <Border BorderBrush="#CCCCCC" BorderThickness="1" Background="White"
+                            Margin="0,10,10,10" Width="360" HorizontalAlignment="Right">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="15">
+                                <TextBlock Text="Редактирование движения" FontSize="16" FontWeight="Bold" 
+                                           Margin="0,0,0,15"/>
+
+                                <!-- Поле ID (только для чтения) -->
+                                <TextBlock Text="ID:" Margin="0,5,0,3"/>
+                                <TextBox x:Name="MovementIdTextBox" IsReadOnly="True" 
+                                         Background="#F0F0F0" Height="25" Margin="0,0,0,8"/>
+
+                                <!-- Выбор оборудования -->
+                                <TextBlock Text="Оборудование:" Margin="0,5,0,3"/>
+                                <ComboBox x:Name="MovementEquipmentComboBox" Height="25" Margin="0,0,0,8"
+                                          DisplayMemberPath="EquipmentName" SelectedValuePath="EquipmentID"/>
+
+                                <!-- Дата движения -->
+                                <TextBlock Text="Дата движения:" Margin="0,5,0,3"/>
+                                <DatePicker x:Name="MovementDatePicker" Height="25" Margin="0,0,0,8"/>
+
+                                <!-- Количество -->
+                                <TextBlock Text="Количество:" Margin="0,5,0,3"/>
+                                <TextBox x:Name="MovementQuantityTextBox" Height="25" Margin="0,0,0,8"/>
+
+                                <!-- Тип движения -->
+                                <TextBlock Text="Тип движения:" Margin="0,5,0,3"/>
+                                <ComboBox x:Name="MovementTypeComboBox" Height="25" Margin="0,0,0,8">
+                                    <ComboBoxItem Content="Поступление"/>
+                                    <ComboBoxItem Content="Списание"/>
+                                    <ComboBoxItem Content="Перемещение"/>
+                                    <ComboBoxItem Content="Ремонт"/>
+                                    <ComboBoxItem Content="Возврат"/>
+                                </ComboBox>
+
+                                <!-- Выбор поставщика -->
+                                <TextBlock Text="Поставщик:" Margin="0,5,0,3"/>
+                                <ComboBox x:Name="MovementSupplierComboBox" Height="25" Margin="0,0,0,8"
+                                          DisplayMemberPath="SupplierName" SelectedValuePath="SupplierID"/>
+
+                                <!-- Выбор сотрудника -->
+                                <TextBlock Text="Сотрудник:" Margin="0,5,0,3"/>
+                                <ComboBox x:Name="MovementEmployeeComboBox" Height="25" Margin="0,0,0,8"
+                                          DisplayMemberPath="FullName" SelectedValuePath="EmployeeID"/>
+
+                                <!-- Примечания -->
+                                <TextBlock Text="Примечания:" Margin="0,5,0,3"/>
+                                <TextBox x:Name="MovementNotesTextBox" Height="60" Margin="0,0,0,15"
+                                         TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+
+                                <!-- Кнопки управления -->
+                                <Button Content="Добавить" Click="AddMovementButton_Click" 
+                                        Height="35" Margin="0,5" FontSize="14"
+                                        Background="#4CAF50" Foreground="White" BorderThickness="0"/>
+                                
+                                <Button Content="Обновить" Click="UpdateMovementButton_Click" 
+                                        Height="35" Margin="0,5" FontSize="14"
+                                        Background="#2196F3" Foreground="White" BorderThickness="0"/>
+                                
+                                <Button Content="Удалить" Click="DeleteMovementButton_Click" 
+                                        Height="35" Margin="0,5" FontSize="14"
+                                        Background="#f44336" Foreground="White" BorderThickness="0"/>
+                                
+                                <Button Content="Очистить поля" Click="ClearMovementButton_Click" 
+                                        Height="35" Margin="0,15,0,5" FontSize="14"
+                                        Background="#9E9E9E" Foreground="White" BorderThickness="0"/>
+                                
+                                <Button Content="Обновить список" Click="RefreshMovementButton_Click" 
+                                        Height="35" Margin="0,5" FontSize="14"
+                                        Background="#FF9800" Foreground="White" BorderThickness="0"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Border>
+                </Grid>
+            </TabItem>
+
             <TabItem Header="Другие настройки" FontSize="14">
                 <Grid Background="#FFF5F5F5">
                     <TextBlock Text="Дополнительные административные функции будут добавлены здесь" 
