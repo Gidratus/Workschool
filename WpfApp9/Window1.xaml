@@ -37,7 +37,7 @@
             </TabItem>
         </TabControl>
         <Button Content="Редктировать Профиль" Click="OpenProfileButton_Click" HorizontalAlignment="Left" Margin="10,71,0,0" VerticalAlignment="Top" Height="28" Width="137" Background="#2196F3" Foreground="White" FontSize="12"/>
-        <Button Content="Профиль" HorizontalAlignment="Left" Background="#2196F3" Foreground="White" Margin="10,32,0,0" VerticalAlignment="Top" Height="34" Width="81"/>
+        <Button Content="Профиль" Click="OpenMyMovementsButton_Click" HorizontalAlignment="Left" Background="#2196F3" Foreground="White" Margin="10,32,0,0" VerticalAlignment="Top" Height="34" Width="81"/>
 
     </Grid>
 </Window>

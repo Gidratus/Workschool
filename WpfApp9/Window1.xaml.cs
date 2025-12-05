@@ -178,5 +178,15 @@ namespace WpfApp9
             profileWindow.Owner = this;
             profileWindow.ShowDialog();
         }
+
+        /// <summary>
+        /// Открытие окна просмотра записей движений оборудования для текущего пользователя
+        /// </summary>
+        private void OpenMyMovementsButton_Click(object sender, RoutedEventArgs e)
+        {
+            MyMovementsWindow myMovementsWindow = new MyMovementsWindow(_currentUser.EmployeeId);
+            myMovementsWindow.Owner = this;
+            myMovementsWindow.ShowDialog();
+        }
     }
 }
