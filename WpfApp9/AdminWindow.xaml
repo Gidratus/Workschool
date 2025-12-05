@@ -282,14 +282,11 @@
                                 <TextBlock Text="Количество:" Margin="0,5,0,3"/>
                                 <TextBox x:Name="MovementQuantityTextBox" Height="25" Margin="0,0,0,8"/>
 
-                                <!-- Тип движения -->
+                                <!-- Тип движения (IN - поступление, OUT - списание) -->
                                 <TextBlock Text="Тип движения:" Margin="0,5,0,3"/>
                                 <ComboBox x:Name="MovementTypeComboBox" Height="25" Margin="0,0,0,8">
-                                    <ComboBoxItem Content="Поступление"/>
-                                    <ComboBoxItem Content="Списание"/>
-                                    <ComboBoxItem Content="Перемещение"/>
-                                    <ComboBoxItem Content="Ремонт"/>
-                                    <ComboBoxItem Content="Возврат"/>
+                                    <ComboBoxItem Content="IN"/>
+                                    <ComboBoxItem Content="OUT"/>
                                 </ComboBox>
 
                                 <!-- Выбор поставщика -->
