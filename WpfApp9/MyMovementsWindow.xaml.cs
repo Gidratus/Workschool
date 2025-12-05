@@ -48,7 +48,8 @@ namespace WpfApp9
 
                 // SQL-запрос для получения записей движений с JOIN для имен оборудования и поставщика
                 // Фильтруем по EmployeeID текущего пользователя
-                string sql = @"SELECT e.EquipmentName, m.MovementDate, m.Quantity, m.MovementType, 
+                // Включаем MovementID для идентификации записей и Isdone для отметки выполнения
+                string sql = @"SELECT m.MovementID, m.Isdone, e.EquipmentName, m.MovementDate, m.Quantity, m.MovementType, 
                               s.SupplierName, m.Notes
                               FROM dbo.EquipmentMovement m
                               LEFT JOIN dbo.Equipment e ON m.EquipmentID = e.EquipmentID
@@ -71,6 +72,51 @@ namespace WpfApp9
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка при загрузке записей: {ex.Message}",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Сохранение изменений статуса выполнения задач
+        /// </summary>
+        private async void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // Получаем DataTable из DataGrid
+                var dataView = MovementsDataGrid.ItemsSource as DataView;
+                if (dataView == null) return;
+
+                await using var conn = new SqlConnection(ConnectionString);
+                await conn.OpenAsync();
+
+                int updatedCount = 0;
+
+                // Перебираем все строки и обновляем статус Isdone
+                foreach (DataRowView row in dataView)
+                {
+                    int movementId = Convert.ToInt32(row["MovementID"]);
+                    bool isDone = row["Isdone"] != DBNull.Value && Convert.ToBoolean(row["Isdone"]);
+
+                    string sql = "UPDATE dbo.EquipmentMovement SET Isdone = @Isdone WHERE MovementID = @MovementID";
+                    await using var cmd = new SqlCommand(sql, conn);
+                    cmd.Parameters.AddWithValue("@Isdone", isDone);
+                    cmd.Parameters.AddWithValue("@MovementID", movementId);
+
+                    updatedCount += await cmd.ExecuteNonQueryAsync();
+                }
+
+                MessageBox.Show($"Изменения сохранены! Обновлено записей: {updatedCount}",
+                    "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show($"SQL ошибка при сохранении: {ex.Message}",
+                    "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при сохранении: {ex.Message}",
                     "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
