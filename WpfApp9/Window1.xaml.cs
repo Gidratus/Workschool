@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -45,10 +45,12 @@ namespace WpfApp9
                 EmployeesTabItem.Visibility = Visibility.Collapsed;
             }
             
-            // Скрываем кнопку "Админ доступ" для стажеров
+            // Скрываем кнопку "Админ доступ" и "Подтверждение работ" для стажеров
+            // Эти функции доступны только для Менеджеров и Администраторов
             if (_currentUser.Position != null && _currentUser.Position.Equals("Стажер", StringComparison.OrdinalIgnoreCase))
             {
                 AdminAccessButton.Visibility = Visibility.Collapsed;
+                WorkConfirmationButton.Visibility = Visibility.Collapsed;
             }
             
             await LoadAllTablesAsync();
@@ -189,9 +191,16 @@ namespace WpfApp9
             myMovementsWindow.ShowDialog();
         }
 
+        /// <summary>
+        /// Открытие окна подтверждения работ для Менеджеров и Администраторов
+        /// </summary>
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-
+            // Создаем и открываем окно подтверждения работ
+            // Передаем данные текущего пользователя для проверки прав доступа
+            WorkConfirmationWindow confirmationWindow = new WorkConfirmationWindow(_currentUser);
+            confirmationWindow.Owner = this;
+            confirmationWindow.ShowDialog();
         }
     }
 }
