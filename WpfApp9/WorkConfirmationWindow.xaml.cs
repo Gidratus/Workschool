@@ -25,9 +25,18 @@ namespace WpfApp9
         /// <param name="userData">Данные текущего пользователя (ID и должность)</param>
         public WorkConfirmationWindow(UserData userData)
         {
-            InitializeComponent();
-            _currentUser = userData;
-            Loaded += WorkConfirmationWindow_Loaded;
+            try
+            {
+                InitializeComponent();
+                _currentUser = userData;
+                Loaded += WorkConfirmationWindow_Loaded;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка инициализации окна: {ex.Message}\n\nТип: {ex.GetType().Name}",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                throw;
+            }
         }
 
         /// <summary>

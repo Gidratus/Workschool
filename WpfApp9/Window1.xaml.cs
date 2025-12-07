@@ -196,11 +196,19 @@ namespace WpfApp9
         /// </summary>
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            // Создаем и открываем окно подтверждения работ
-            // Передаем данные текущего пользователя для проверки прав доступа
-            WorkConfirmationWindow confirmationWindow = new WorkConfirmationWindow(_currentUser);
-            confirmationWindow.Owner = this;
-            confirmationWindow.ShowDialog();
+            try
+            {
+                // Создаем и открываем окно подтверждения работ
+                // Передаем данные текущего пользователя для проверки прав доступа
+                WorkConfirmationWindow confirmationWindow = new WorkConfirmationWindow(_currentUser);
+                confirmationWindow.Owner = this;
+                confirmationWindow.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при открытии окна: {ex.Message}\n\nТип: {ex.GetType().Name}\n\nПодробности: {ex.StackTrace}",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }
