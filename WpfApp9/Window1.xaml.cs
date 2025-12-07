@@ -188,5 +188,10 @@ namespace WpfApp9
             myMovementsWindow.Owner = this;
             myMovementsWindow.ShowDialog();
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
