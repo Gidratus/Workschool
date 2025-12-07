@@ -35,17 +35,25 @@ namespace WpfApp9
         /// </summary>
         private async void WorkConfirmationWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            // Проверка прав доступа - только Менеджер или Админ могут использовать это окно
-            if (!IsUserAuthorized())
+            try
             {
-                MessageBox.Show("У вас нет прав для подтверждения работ. Доступ только для Менеджеров и Администраторов.",
-                    "Доступ запрещен", MessageBoxButton.OK, MessageBoxImage.Warning);
-                Close();
-                return;
-            }
+                // Проверка прав доступа - только Менеджер или Админ могут использовать это окно
+                if (!IsUserAuthorized())
+                {
+                    MessageBox.Show("У вас нет прав для подтверждения работ. Доступ только для Менеджеров и Администраторов.",
+                        "Доступ запрещен", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    Close();
+                    return;
+                }
 
-            // Загружаем записи, отмеченные стажерами как выполненные
-            await LoadPendingConfirmationsAsync();
+                // Загружаем записи, отмеченные стажерами как выполненные
+                await LoadPendingConfirmationsAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при загрузке окна: {ex.Message}\n\nПодробности: {ex.StackTrace}",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         /// <summary>
@@ -87,9 +95,9 @@ namespace WpfApp9
                 // isAdmindone - поле для подтверждения менеджером/админом
                 string sql = @"SELECT m.MovementID, 
                                       m.Isdone, 
-                                      ISNULL(m.isAdmindone, 0) as isAdmindone,
+                                      ISNULL(m.isAdmindone, CAST(0 as bit)) as isAdmindone,
                                       e.EquipmentName, 
-                                      CONCAT(emp.FirstName, ' ', emp.LastName) as EmployeeName,
+                                      (emp.FirstName + ' ' + emp.LastName) as EmployeeName,
                                       m.MovementDate, 
                                       m.Quantity, 
                                       m.MovementType, 
