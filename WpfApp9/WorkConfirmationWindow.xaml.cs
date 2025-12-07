@@ -7,36 +7,28 @@ using Microsoft.Data.SqlClient;
 namespace WpfApp9
 {
     /// <summary>
-    /// Окно подтверждения выполненных работ для Менеджеров и Администраторов.
-    /// Отображает записи, которые стажеры отметили как выполненные (Isdone = true),
-    /// и позволяет менеджерам/админам подтвердить их.
+    /// Окно подтверждения выполненных работ для Менеджеров и Администраторов
     /// </summary>
     public partial class WorkConfirmationWindow : Window
     {
         // Строка подключения к базе данных
         private const string ConnectionString = App.ConnectionString;
 
-        // Данные текущего пользователя (для проверки прав доступа)
-        private readonly UserData _currentUser;
+        // ID текущего пользователя
+        private readonly int _employeeId;
+        
+        // Должность текущего пользователя
+        private string _position;
 
         /// <summary>
         /// Конструктор окна подтверждения работ
         /// </summary>
-        /// <param name="userData">Данные текущего пользователя (ID и должность)</param>
-        public WorkConfirmationWindow(UserData userData)
+        /// <param name="employeeId">ID пользователя</param>
+        public WorkConfirmationWindow(int employeeId)
         {
-            try
-            {
-                InitializeComponent();
-                _currentUser = userData;
-                Loaded += WorkConfirmationWindow_Loaded;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка инициализации окна: {ex.Message}\n\nТип: {ex.GetType().Name}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                throw;
-            }
+            InitializeComponent();
+            _employeeId = employeeId;
+            Loaded += WorkConfirmationWindow_Loaded;
         }
 
         /// <summary>
@@ -46,10 +38,13 @@ namespace WpfApp9
         {
             try
             {
-                // Проверка прав доступа - только Менеджер или Админ могут использовать это окно
+                // Получаем должность пользователя из БД
+                await LoadUserPositionAsync();
+                
+                // Проверка прав доступа - только Менеджер или Админ
                 if (!IsUserAuthorized())
                 {
-                    MessageBox.Show("У вас нет прав для подтверждения работ. Доступ только для Менеджеров и Администраторов.",
+                    MessageBox.Show("У вас нет прав для подтверждения работ.\nДоступ только для Менеджеров и Администраторов.",
                         "Доступ запрещен", MessageBoxButton.OK, MessageBoxImage.Warning);
                     Close();
                     return;
@@ -60,36 +55,53 @@ namespace WpfApp9
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при загрузке окна: {ex.Message}\n\nПодробности: {ex.StackTrace}",
+                MessageBox.Show($"Ошибка при загрузке: {ex.Message}",
                     "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         /// <summary>
-        /// Проверка, имеет ли пользователь права на подтверждение работ
-        /// Доступ только для Менеджеров и Администраторов
+        /// Загрузка должности пользователя из базы данных
         /// </summary>
-        /// <returns>true если пользователь имеет права, иначе false</returns>
-        private bool IsUserAuthorized()
+        private async Task LoadUserPositionAsync()
         {
-            // Проверяем должность пользователя
-            if (string.IsNullOrEmpty(_currentUser.Position))
-                return false;
+            try
+            {
+                await using var conn = new SqlConnection(ConnectionString);
+                await conn.OpenAsync();
 
-            // Разрешаем доступ для Менеджера, Админа, Администратора
-            // Учитываем разные варианты написания (Менеджер/Менджер)
-            string position = _currentUser.Position.ToLower();
-            return position.Contains("менеджер") || 
-                   position.Contains("менджер") ||    // вариант без "е"
-                   position.Contains("админ") || 
-                   position.Contains("администратор") ||
-                   position.Contains("manager") ||
-                   position.Contains("admin");
+                string sql = "SELECT Position FROM dbo.Employees WHERE EmployeeID = @EmployeeID";
+                await using var cmd = new SqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@EmployeeID", _employeeId);
+
+                var result = await cmd.ExecuteScalarAsync();
+                _position = result?.ToString() ?? "";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при загрузке данных пользователя: {ex.Message}",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                _position = "";
+            }
         }
 
         /// <summary>
-        /// Загрузка записей, которые отмечены стажерами как выполненные (Isdone = 1)
-        /// и ожидают подтверждения от менеджера
+        /// Проверка прав доступа (Менеджер или Админ)
+        /// </summary>
+        private bool IsUserAuthorized()
+        {
+            if (string.IsNullOrEmpty(_position))
+                return false;
+
+            string position = _position.ToLower();
+            return position.Contains("менеджер") || 
+                   position.Contains("менджер") ||
+                   position.Contains("админ") || 
+                   position.Contains("администратор");
+        }
+
+        /// <summary>
+        /// Загрузка записей, отмеченных стажерами как выполненные
         /// </summary>
         private async Task LoadPendingConfirmationsAsync()
         {
@@ -99,22 +111,18 @@ namespace WpfApp9
                 await using var conn = new SqlConnection(ConnectionString);
                 await conn.OpenAsync();
 
-                // SQL-запрос для получения записей, отмеченных как выполненные
-                // Включаем информацию о сотруднике, который выполнил работу
-                // isAdmindone - поле для подтверждения менеджером/админом
+                // SQL-запрос для получения записей с Isdone = 1
                 string sql = @"SELECT m.MovementID, 
                                       m.Isdone, 
-                                      ISNULL(m.isAdmindone, CAST(0 as bit)) as isAdmindone,
+                                      m.isAdmindone,
                                       e.EquipmentName, 
                                       (emp.FirstName + ' ' + emp.LastName) as EmployeeName,
                                       m.MovementDate, 
                                       m.Quantity, 
                                       m.MovementType, 
-                                      s.SupplierName, 
                                       m.Notes
                               FROM dbo.EquipmentMovement m
                               LEFT JOIN dbo.Equipment e ON m.EquipmentID = e.EquipmentID
-                              LEFT JOIN dbo.Suppliers s ON m.SupplierID = s.SupplierID
                               LEFT JOIN dbo.Employees emp ON m.EmployeeID = emp.EmployeeID
                               WHERE m.Isdone = 1
                               ORDER BY m.MovementDate DESC";
@@ -123,10 +131,8 @@ namespace WpfApp9
                 await using var reader = await cmd.ExecuteReaderAsync();
                 dt.Load(reader);
 
-                // Устанавливаем источник данных для DataGrid
                 ConfirmationDataGrid.ItemsSource = dt.DefaultView;
 
-                // Показываем информацию о количестве записей
                 if (dt.Rows.Count == 0)
                 {
                     MessageBox.Show("Нет работ, ожидающих подтверждения.",
@@ -135,26 +141,23 @@ namespace WpfApp9
             }
             catch (SqlException ex)
             {
-                MessageBox.Show($"SQL ошибка при загрузке записей: {ex.Message}",
+                MessageBox.Show($"SQL ошибка: {ex.Message}",
                     "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при загрузке записей: {ex.Message}",
+                MessageBox.Show($"Ошибка: {ex.Message}",
                     "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-
         /// <summary>
-        /// Сохранение подтверждений в базу данных
-        /// Обновляет поле IsConfirmed для выбранных записей
+        /// Сохранение подтверждений
         /// </summary>
         private async void SaveConfirmationsButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                // Получаем DataView из DataGrid
                 var dataView = ConfirmationDataGrid.ItemsSource as DataView;
                 if (dataView == null || dataView.Count == 0)
                 {
@@ -168,13 +171,11 @@ namespace WpfApp9
 
                 int confirmedCount = 0;
 
-                // Перебираем все строки и обновляем статус isAdmindone
                 foreach (DataRowView row in dataView)
                 {
                     int movementId = Convert.ToInt32(row["MovementID"]);
                     bool isAdminDone = row["isAdmindone"] != DBNull.Value && Convert.ToBoolean(row["isAdmindone"]);
 
-                    // Обновляем только если подтверждено
                     if (isAdminDone)
                     {
                         string sql = "UPDATE dbo.EquipmentMovement SET isAdmindone = @isAdmindone WHERE MovementID = @MovementID";
@@ -187,16 +188,10 @@ namespace WpfApp9
                     }
                 }
 
-                MessageBox.Show($"Подтверждения сохранены!\nПодтверждено работ: {confirmedCount}",
+                MessageBox.Show($"Подтверждено работ: {confirmedCount}",
                     "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                // Обновляем список после сохранения
                 await LoadPendingConfirmationsAsync();
-            }
-            catch (SqlException ex)
-            {
-                MessageBox.Show($"SQL ошибка при сохранении: {ex.Message}",
-                    "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch (Exception ex)
             {
@@ -206,7 +201,7 @@ namespace WpfApp9
         }
 
         /// <summary>
-        /// Обновление списка записей
+        /// Обновление списка
         /// </summary>
         private async void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
