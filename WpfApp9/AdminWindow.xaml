@@ -1,4 +1,4 @@
-﻿<Window x:Class="WpfApp9.AdminWindow"
+<Window x:Class="WpfApp9.AdminWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -63,6 +63,11 @@
                             <Button Content="Обновить список" Click="RefreshButton_Click" 
                                     Height="35" Margin="0,5" FontSize="14"
                                     Background="#FF9800" Foreground="White" BorderThickness="0"/>
+                            
+                            <!-- Кнопка для сохранения отчета в Word -->
+                            <Button Content="Сохранить Word" Click="SaveCategoriesWordButton_Click" 
+                                    Height="35" Margin="0,15,0,5" FontSize="14"
+                                    Background="#1565C0" Foreground="White" BorderThickness="0"/>
                         </StackPanel>
                     </Border>
                 </Grid>

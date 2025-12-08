@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -13,6 +13,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Microsoft.Data.SqlClient;
+using Microsoft.Win32;
+// Пространства имён для работы с Word документами (OpenXML)
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace WpfApp9
 {
@@ -253,6 +258,84 @@ namespace WpfApp9
         {
             CategoryIdTextBox.Clear();
             CategoryNameTextBox.Clear();
+        }
+
+        /// <summary>
+        /// Обработчик кнопки "Сохранить Word" - создаёт Word документ с заголовком "Отчет"
+        /// </summary>
+        private void SaveCategoriesWordButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // Открываем диалог сохранения файла
+                SaveFileDialog saveFileDialog = new SaveFileDialog
+                {
+                    Filter = "Документ Word (*.docx)|*.docx",
+                    DefaultExt = ".docx",
+                    FileName = "Отчет_Категории"
+                };
+
+                // Если пользователь выбрал файл и нажал "Сохранить"
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    // Создаём Word документ с заголовком "Отчет"
+                    CreateWordDocument(saveFileDialog.FileName);
+                    
+                    MessageBox.Show("Документ Word успешно сохранен!",
+                        "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при сохранении документа: {ex.Message}",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Создаёт Word документ с заголовком "Отчет"
+        /// </summary>
+        /// <param name="filePath">Путь к файлу для сохранения</param>
+        private void CreateWordDocument(string filePath)
+        {
+            // Создаём новый Word документ
+            using (WordprocessingDocument wordDocument = WordprocessingDocument.Create(filePath, WordprocessingDocumentType.Document))
+            {
+                // Добавляем основную часть документа
+                MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
+                mainPart.Document = new Document();
+                Body body = mainPart.Document.AppendChild(new Body());
+
+                // Создаём параграф с заголовком "Отчет"
+                Paragraph titleParagraph = new Paragraph();
+                
+                // Настройки параграфа - выравнивание по центру
+                ParagraphProperties paragraphProperties = new ParagraphProperties();
+                Justification justification = new Justification() { Val = JustificationValues.Center };
+                paragraphProperties.Append(justification);
+                titleParagraph.Append(paragraphProperties);
+
+                // Создаём текст заголовка
+                Run run = new Run();
+                
+                // Настройки текста - жирный шрифт, размер 28pt (28 * 2 = 56 в OpenXML)
+                RunProperties runProperties = new RunProperties();
+                Bold bold = new Bold();
+                FontSize fontSize = new FontSize() { Val = "56" };
+                runProperties.Append(bold);
+                runProperties.Append(fontSize);
+                run.Append(runProperties);
+                
+                // Добавляем текст "Отчет"
+                Text text = new Text("Отчет");
+                run.Append(text);
+                
+                titleParagraph.Append(run);
+                body.Append(titleParagraph);
+
+                // Сохраняем документ
+                mainPart.Document.Save();
+            }
         }
 
         // ===============================================
