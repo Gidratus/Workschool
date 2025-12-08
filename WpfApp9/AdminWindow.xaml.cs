@@ -262,9 +262,9 @@ namespace WpfApp9
         }
 
         /// <summary>
-        /// Обработчик кнопки "Сохранить Word" - создаёт Word документ с заголовком "Отчет"
+        /// Обработчик кнопки "Сохранить Word" - создаёт Word документ с таблицей категорий
         /// </summary>
-        private void SaveCategoriesWordButton_Click(object sender, RoutedEventArgs e)
+        private async void SaveCategoriesWordButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -279,8 +279,11 @@ namespace WpfApp9
                 // Если пользователь выбрал файл и нажал "Сохранить"
                 if (saveFileDialog.ShowDialog() == true)
                 {
-                    // Создаём Word документ с заголовком "Отчет"
-                    CreateWordDocument(saveFileDialog.FileName);
+                    // Получаем данные категорий из БД
+                    DataTable categoriesData = await GetCategoriesDataAsync();
+                    
+                    // Создаём Word документ с заголовком "Отчет" и таблицей категорий
+                    CreateWordDocumentWithCategories(saveFileDialog.FileName, categoriesData);
                     
                     MessageBox.Show("Документ Word успешно сохранен!",
                         "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -294,10 +297,27 @@ namespace WpfApp9
         }
 
         /// <summary>
-        /// Создаёт Word документ с заголовком "Отчет"
+        /// Получает данные категорий из базы данных
+        /// </summary>
+        /// <returns>DataTable с категориями</returns>
+        private async Task<DataTable> GetCategoriesDataAsync()
+        {
+            var dt = new DataTable();
+            await using var conn = new SqlConnection(ConnectionString);
+            await conn.OpenAsync();
+            string sql = "SELECT CategoryID, CategoryName FROM dbo.Categories ORDER BY CategoryID";
+            await using var cmd = new SqlCommand(sql, conn);
+            await using var reader = await cmd.ExecuteReaderAsync();
+            dt.Load(reader);
+            return dt;
+        }
+
+        /// <summary>
+        /// Создаёт Word документ с заголовком "Отчет" и таблицей категорий
         /// </summary>
         /// <param name="filePath">Путь к файлу для сохранения</param>
-        private void CreateWordDocument(string filePath)
+        /// <param name="categoriesData">Данные категорий для таблицы</param>
+        private void CreateWordDocumentWithCategories(string filePath, DataTable categoriesData)
         {
             // Создаём новый Word документ
             using (WordprocessingDocument wordDocument = WordprocessingDocument.Create(filePath, WordprocessingDocumentType.Document))
@@ -307,36 +327,131 @@ namespace WpfApp9
                 mainPart.Document = new WordProcessing.Document();
                 WordProcessing.Body body = mainPart.Document.AppendChild(new WordProcessing.Body());
 
-                // Создаём параграф с заголовком "Отчет"
+                // === ЗАГОЛОВОК "Отчет" ===
                 WordProcessing.Paragraph titleParagraph = new WordProcessing.Paragraph();
                 
                 // Настройки параграфа - выравнивание по центру
-                WordProcessing.ParagraphProperties paragraphProperties = new WordProcessing.ParagraphProperties();
-                WordProcessing.Justification justification = new WordProcessing.Justification() { Val = WordProcessing.JustificationValues.Center };
-                paragraphProperties.Append(justification);
-                titleParagraph.Append(paragraphProperties);
+                WordProcessing.ParagraphProperties titleParagraphProps = new WordProcessing.ParagraphProperties();
+                titleParagraphProps.Append(new WordProcessing.Justification() { Val = WordProcessing.JustificationValues.Center });
+                // Отступ после заголовка
+                titleParagraphProps.Append(new WordProcessing.SpacingBetweenLines() { After = "400" });
+                titleParagraph.Append(titleParagraphProps);
 
-                // Создаём текст заголовка
-                WordProcessing.Run run = new WordProcessing.Run();
+                // Текст заголовка - жирный, 28pt
+                WordProcessing.Run titleRun = new WordProcessing.Run();
+                WordProcessing.RunProperties titleRunProps = new WordProcessing.RunProperties();
+                titleRunProps.Append(new WordProcessing.Bold());
+                titleRunProps.Append(new WordProcessing.FontSize() { Val = "56" }); // 28pt * 2
+                titleRun.Append(titleRunProps);
+                titleRun.Append(new WordProcessing.Text("Отчет"));
                 
-                // Настройки текста - жирный шрифт, размер 28pt (28 * 2 = 56 в OpenXML)
-                WordProcessing.RunProperties runProperties = new WordProcessing.RunProperties();
-                WordProcessing.Bold bold = new WordProcessing.Bold();
-                WordProcessing.FontSize fontSize = new WordProcessing.FontSize() { Val = "56" };
-                runProperties.Append(bold);
-                runProperties.Append(fontSize);
-                run.Append(runProperties);
-                
-                // Добавляем текст "Отчет"
-                WordProcessing.Text text = new WordProcessing.Text("Отчет");
-                run.Append(text);
-                
-                titleParagraph.Append(run);
+                titleParagraph.Append(titleRun);
                 body.Append(titleParagraph);
+
+                // === ПОДЗАГОЛОВОК "Категории" ===
+                WordProcessing.Paragraph subtitleParagraph = new WordProcessing.Paragraph();
+                WordProcessing.ParagraphProperties subtitleProps = new WordProcessing.ParagraphProperties();
+                subtitleProps.Append(new WordProcessing.SpacingBetweenLines() { After = "200" });
+                subtitleParagraph.Append(subtitleProps);
+                
+                WordProcessing.Run subtitleRun = new WordProcessing.Run();
+                WordProcessing.RunProperties subtitleRunProps = new WordProcessing.RunProperties();
+                subtitleRunProps.Append(new WordProcessing.Bold());
+                subtitleRunProps.Append(new WordProcessing.FontSize() { Val = "32" }); // 16pt * 2
+                subtitleRun.Append(subtitleRunProps);
+                subtitleRun.Append(new WordProcessing.Text("Категории"));
+                
+                subtitleParagraph.Append(subtitleRun);
+                body.Append(subtitleParagraph);
+
+                // === ТАБЛИЦА С КАТЕГОРИЯМИ ===
+                WordProcessing.Table table = new WordProcessing.Table();
+
+                // Настройки таблицы - границы
+                WordProcessing.TableProperties tableProps = new WordProcessing.TableProperties();
+                WordProcessing.TableBorders tableBorders = new WordProcessing.TableBorders(
+                    new WordProcessing.TopBorder() { Val = WordProcessing.BorderValues.Single, Size = 4 },
+                    new WordProcessing.BottomBorder() { Val = WordProcessing.BorderValues.Single, Size = 4 },
+                    new WordProcessing.LeftBorder() { Val = WordProcessing.BorderValues.Single, Size = 4 },
+                    new WordProcessing.RightBorder() { Val = WordProcessing.BorderValues.Single, Size = 4 },
+                    new WordProcessing.InsideHorizontalBorder() { Val = WordProcessing.BorderValues.Single, Size = 4 },
+                    new WordProcessing.InsideVerticalBorder() { Val = WordProcessing.BorderValues.Single, Size = 4 }
+                );
+                tableProps.Append(tableBorders);
+                // Ширина таблицы - 100%
+                tableProps.Append(new WordProcessing.TableWidth() { Width = "5000", Type = WordProcessing.TableWidthUnitValues.Pct });
+                table.Append(tableProps);
+
+                // === ЗАГОЛОВОК ТАБЛИЦЫ ===
+                WordProcessing.TableRow headerRow = new WordProcessing.TableRow();
+                headerRow.Append(CreateTableCell("ID", true));
+                headerRow.Append(CreateTableCell("Название категории", true));
+                table.Append(headerRow);
+
+                // === СТРОКИ С ДАННЫМИ ===
+                foreach (DataRow row in categoriesData.Rows)
+                {
+                    WordProcessing.TableRow dataRow = new WordProcessing.TableRow();
+                    dataRow.Append(CreateTableCell(row["CategoryID"].ToString() ?? "", false));
+                    dataRow.Append(CreateTableCell(row["CategoryName"].ToString() ?? "", false));
+                    table.Append(dataRow);
+                }
+
+                body.Append(table);
 
                 // Сохраняем документ
                 mainPart.Document.Save();
             }
+        }
+
+        /// <summary>
+        /// Создаёт ячейку таблицы Word с текстом
+        /// </summary>
+        /// <param name="text">Текст ячейки</param>
+        /// <param name="isHeader">Является ли ячейка заголовком (жирный текст)</param>
+        /// <returns>Ячейка таблицы</returns>
+        private WordProcessing.TableCell CreateTableCell(string text, bool isHeader)
+        {
+            WordProcessing.TableCell cell = new WordProcessing.TableCell();
+            
+            // Настройки ячейки - отступы внутри
+            WordProcessing.TableCellProperties cellProps = new WordProcessing.TableCellProperties();
+            cellProps.Append(new WordProcessing.TableCellMargin(
+                new WordProcessing.TopMargin() { Width = "50", Type = WordProcessing.TableWidthUnitValues.Dxa },
+                new WordProcessing.BottomMargin() { Width = "50", Type = WordProcessing.TableWidthUnitValues.Dxa },
+                new WordProcessing.LeftMargin() { Width = "100", Type = WordProcessing.TableWidthUnitValues.Dxa },
+                new WordProcessing.RightMargin() { Width = "100", Type = WordProcessing.TableWidthUnitValues.Dxa }
+            ));
+            
+            // Для заголовка - серый фон
+            if (isHeader)
+            {
+                cellProps.Append(new WordProcessing.Shading() 
+                { 
+                    Val = WordProcessing.ShadingPatternValues.Clear, 
+                    Fill = "DDDDDD" // Светло-серый фон
+                });
+            }
+            cell.Append(cellProps);
+
+            // Параграф с текстом
+            WordProcessing.Paragraph paragraph = new WordProcessing.Paragraph();
+            WordProcessing.Run run = new WordProcessing.Run();
+            
+            // Настройки текста
+            WordProcessing.RunProperties runProps = new WordProcessing.RunProperties();
+            runProps.Append(new WordProcessing.FontSize() { Val = "24" }); // 12pt
+            if (isHeader)
+            {
+                runProps.Append(new WordProcessing.Bold());
+            }
+            run.Append(runProps);
+            run.Append(new WordProcessing.Text(text));
+            
+            paragraph.Append(run);
+            cell.Append(paragraph);
+            
+            return cell;
         }
 
         // ===============================================
