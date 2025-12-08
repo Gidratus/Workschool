@@ -142,6 +142,11 @@
                                 <Button Content="Обновить список" Click="RefreshEmployeeButton_Click" 
                                         Height="35" Margin="0,5" FontSize="14"
                                         Background="#FF9800" Foreground="White" BorderThickness="0"/>
+                                
+                                <!-- Кнопка для сохранения отчета в Word -->
+                                <Button Content="Сохранить Word" Click="SaveEmployeesWordButton_Click" 
+                                        Height="35" Margin="0,15,0,5" FontSize="14"
+                                        Background="#1565C0" Foreground="White" BorderThickness="0"/>
                             </StackPanel>
                         </ScrollViewer>
                     </Border>
@@ -234,6 +239,11 @@
                                 <Button Content="Обновить список" Click="RefreshEquipmentButton_Click" 
                                         Height="35" Margin="0,5" FontSize="14"
                                         Background="#FF9800" Foreground="White" BorderThickness="0"/>
+                                
+                                <!-- Кнопка для сохранения отчета в Word -->
+                                <Button Content="Сохранить Word" Click="SaveEquipmentWordButton_Click" 
+                                        Height="35" Margin="0,15,0,5" FontSize="14"
+                                        Background="#1565C0" Foreground="White" BorderThickness="0"/>
                             </StackPanel>
                         </ScrollViewer>
                     </Border>
@@ -332,6 +342,11 @@
                                 <Button Content="Обновить список" Click="RefreshMovementButton_Click" 
                                         Height="35" Margin="0,5" FontSize="14"
                                         Background="#FF9800" Foreground="White" BorderThickness="0"/>
+                                
+                                <!-- Кнопка для сохранения отчета в Word -->
+                                <Button Content="Сохранить Word" Click="SaveMovementsWordButton_Click" 
+                                        Height="35" Margin="0,15,0,5" FontSize="14"
+                                        Background="#1565C0" Foreground="White" BorderThickness="0"/>
                             </StackPanel>
                         </ScrollViewer>
                     </Border>

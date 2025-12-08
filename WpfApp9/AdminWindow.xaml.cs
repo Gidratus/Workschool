@@ -455,6 +455,400 @@ namespace WpfApp9
         }
 
         // ===============================================
+        // Экспорт в Word для Сотрудников
+        // ===============================================
+
+        /// <summary>
+        /// Обработчик кнопки "Сохранить Word" для сотрудников
+        /// </summary>
+        private async void SaveEmployeesWordButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                SaveFileDialog saveFileDialog = new SaveFileDialog
+                {
+                    Filter = "Документ Word (*.docx)|*.docx",
+                    DefaultExt = ".docx",
+                    FileName = "Отчет_Сотрудники"
+                };
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    // Получаем данные сотрудников из БД
+                    DataTable employeesData = await GetEmployeesDataAsync();
+                    
+                    // Создаём Word документ
+                    CreateEmployeesWordDocument(saveFileDialog.FileName, employeesData);
+                    
+                    MessageBox.Show("Документ Word успешно сохранен!",
+                        "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при сохранении документа: {ex.Message}",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Получает данные сотрудников из базы данных
+        /// </summary>
+        private async Task<DataTable> GetEmployeesDataAsync()
+        {
+            var dt = new DataTable();
+            await using var conn = new SqlConnection(ConnectionString);
+            await conn.OpenAsync();
+            string sql = @"SELECT EmployeeID, FirstName, LastName, Position, Email, Phone 
+                          FROM dbo.Employees ORDER BY EmployeeID";
+            await using var cmd = new SqlCommand(sql, conn);
+            await using var reader = await cmd.ExecuteReaderAsync();
+            dt.Load(reader);
+            return dt;
+        }
+
+        /// <summary>
+        /// Создаёт Word документ с таблицей сотрудников
+        /// </summary>
+        private void CreateEmployeesWordDocument(string filePath, DataTable data)
+        {
+            using (WordprocessingDocument wordDocument = WordprocessingDocument.Create(filePath, WordprocessingDocumentType.Document))
+            {
+                MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
+                mainPart.Document = new WordProcessing.Document();
+                WordProcessing.Body body = mainPart.Document.AppendChild(new WordProcessing.Body());
+
+                // Заголовок
+                body.Append(CreateTitleParagraph("Отчет"));
+                body.Append(CreateSubtitleParagraph("Сотрудники"));
+
+                // Таблица
+                WordProcessing.Table table = CreateTable();
+
+                // Заголовок таблицы
+                WordProcessing.TableRow headerRow = new WordProcessing.TableRow();
+                headerRow.Append(CreateTableCell("ID", true));
+                headerRow.Append(CreateTableCell("Имя", true));
+                headerRow.Append(CreateTableCell("Фамилия", true));
+                headerRow.Append(CreateTableCell("Должность", true));
+                headerRow.Append(CreateTableCell("Email", true));
+                headerRow.Append(CreateTableCell("Телефон", true));
+                table.Append(headerRow);
+
+                // Данные
+                foreach (DataRow row in data.Rows)
+                {
+                    WordProcessing.TableRow dataRow = new WordProcessing.TableRow();
+                    dataRow.Append(CreateTableCell(row["EmployeeID"].ToString() ?? "", false));
+                    dataRow.Append(CreateTableCell(row["FirstName"].ToString() ?? "", false));
+                    dataRow.Append(CreateTableCell(row["LastName"].ToString() ?? "", false));
+                    dataRow.Append(CreateTableCell(row["Position"]?.ToString() ?? "", false));
+                    dataRow.Append(CreateTableCell(row["Email"]?.ToString() ?? "", false));
+                    dataRow.Append(CreateTableCell(row["Phone"]?.ToString() ?? "", false));
+                    table.Append(dataRow);
+                }
+
+                body.Append(table);
+                mainPart.Document.Save();
+            }
+        }
+
+        // ===============================================
+        // Экспорт в Word для Equipment
+        // ===============================================
+
+        /// <summary>
+        /// Обработчик кнопки "Сохранить Word" для оборудования
+        /// </summary>
+        private async void SaveEquipmentWordButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                SaveFileDialog saveFileDialog = new SaveFileDialog
+                {
+                    Filter = "Документ Word (*.docx)|*.docx",
+                    DefaultExt = ".docx",
+                    FileName = "Отчет_Оборудование"
+                };
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    // Получаем данные оборудования из БД
+                    DataTable equipmentData = await GetEquipmentDataAsync();
+                    
+                    // Создаём Word документ
+                    CreateEquipmentWordDocument(saveFileDialog.FileName, equipmentData);
+                    
+                    MessageBox.Show("Документ Word успешно сохранен!",
+                        "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при сохранении документа: {ex.Message}",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Получает данные оборудования из базы данных
+        /// </summary>
+        private async Task<DataTable> GetEquipmentDataAsync()
+        {
+            var dt = new DataTable();
+            await using var conn = new SqlConnection(ConnectionString);
+            await conn.OpenAsync();
+            string sql = @"SELECT e.EquipmentID, e.EquipmentName, c.CategoryName, e.Manufacturer, 
+                          e.Model, e.SerialNumber, e.PurchaseDate, e.WarrantyUntil 
+                          FROM dbo.Equipment e
+                          LEFT JOIN dbo.Categories c ON e.CategoryID = c.CategoryID
+                          ORDER BY e.EquipmentID";
+            await using var cmd = new SqlCommand(sql, conn);
+            await using var reader = await cmd.ExecuteReaderAsync();
+            dt.Load(reader);
+            return dt;
+        }
+
+        /// <summary>
+        /// Создаёт Word документ с таблицей оборудования
+        /// </summary>
+        private void CreateEquipmentWordDocument(string filePath, DataTable data)
+        {
+            using (WordprocessingDocument wordDocument = WordprocessingDocument.Create(filePath, WordprocessingDocumentType.Document))
+            {
+                MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
+                mainPart.Document = new WordProcessing.Document();
+                WordProcessing.Body body = mainPart.Document.AppendChild(new WordProcessing.Body());
+
+                // Заголовок
+                body.Append(CreateTitleParagraph("Отчет"));
+                body.Append(CreateSubtitleParagraph("Оборудование"));
+
+                // Таблица
+                WordProcessing.Table table = CreateTable();
+
+                // Заголовок таблицы
+                WordProcessing.TableRow headerRow = new WordProcessing.TableRow();
+                headerRow.Append(CreateTableCell("ID", true));
+                headerRow.Append(CreateTableCell("Название", true));
+                headerRow.Append(CreateTableCell("Категория", true));
+                headerRow.Append(CreateTableCell("Производитель", true));
+                headerRow.Append(CreateTableCell("Модель", true));
+                headerRow.Append(CreateTableCell("Серийный №", true));
+                headerRow.Append(CreateTableCell("Дата покупки", true));
+                headerRow.Append(CreateTableCell("Гарантия до", true));
+                table.Append(headerRow);
+
+                // Данные
+                foreach (DataRow row in data.Rows)
+                {
+                    WordProcessing.TableRow dataRow = new WordProcessing.TableRow();
+                    dataRow.Append(CreateTableCell(row["EquipmentID"].ToString() ?? "", false));
+                    dataRow.Append(CreateTableCell(row["EquipmentName"].ToString() ?? "", false));
+                    dataRow.Append(CreateTableCell(row["CategoryName"]?.ToString() ?? "", false));
+                    dataRow.Append(CreateTableCell(row["Manufacturer"]?.ToString() ?? "", false));
+                    dataRow.Append(CreateTableCell(row["Model"]?.ToString() ?? "", false));
+                    dataRow.Append(CreateTableCell(row["SerialNumber"]?.ToString() ?? "", false));
+                    // Форматируем даты
+                    string purchaseDate = row["PurchaseDate"] != DBNull.Value 
+                        ? ((DateTime)row["PurchaseDate"]).ToString("dd.MM.yyyy") : "";
+                    string warrantyDate = row["WarrantyUntil"] != DBNull.Value 
+                        ? ((DateTime)row["WarrantyUntil"]).ToString("dd.MM.yyyy") : "";
+                    dataRow.Append(CreateTableCell(purchaseDate, false));
+                    dataRow.Append(CreateTableCell(warrantyDate, false));
+                    table.Append(dataRow);
+                }
+
+                body.Append(table);
+                mainPart.Document.Save();
+            }
+        }
+
+        // ===============================================
+        // Экспорт в Word для Движений оборудования
+        // ===============================================
+
+        /// <summary>
+        /// Обработчик кнопки "Сохранить Word" для движений оборудования
+        /// </summary>
+        private async void SaveMovementsWordButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                SaveFileDialog saveFileDialog = new SaveFileDialog
+                {
+                    Filter = "Документ Word (*.docx)|*.docx",
+                    DefaultExt = ".docx",
+                    FileName = "Отчет_Движения"
+                };
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    // Получаем данные движений из БД
+                    DataTable movementsData = await GetMovementsDataAsync();
+                    
+                    // Создаём Word документ
+                    CreateMovementsWordDocument(saveFileDialog.FileName, movementsData);
+                    
+                    MessageBox.Show("Документ Word успешно сохранен!",
+                        "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при сохранении документа: {ex.Message}",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Получает данные движений оборудования из базы данных
+        /// </summary>
+        private async Task<DataTable> GetMovementsDataAsync()
+        {
+            var dt = new DataTable();
+            await using var conn = new SqlConnection(ConnectionString);
+            await conn.OpenAsync();
+            string sql = @"SELECT m.MovementID, e.EquipmentName, m.MovementDate, m.Quantity, 
+                          m.MovementType, s.SupplierName, 
+                          emp.FirstName + ' ' + emp.LastName AS EmployeeName, m.Notes
+                          FROM dbo.EquipmentMovement m
+                          LEFT JOIN dbo.Equipment e ON m.EquipmentID = e.EquipmentID
+                          LEFT JOIN dbo.Suppliers s ON m.SupplierID = s.SupplierID
+                          LEFT JOIN dbo.Employees emp ON m.EmployeeID = emp.EmployeeID
+                          ORDER BY m.MovementID DESC";
+            await using var cmd = new SqlCommand(sql, conn);
+            await using var reader = await cmd.ExecuteReaderAsync();
+            dt.Load(reader);
+            return dt;
+        }
+
+        /// <summary>
+        /// Создаёт Word документ с таблицей движений оборудования
+        /// </summary>
+        private void CreateMovementsWordDocument(string filePath, DataTable data)
+        {
+            using (WordprocessingDocument wordDocument = WordprocessingDocument.Create(filePath, WordprocessingDocumentType.Document))
+            {
+                MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
+                mainPart.Document = new WordProcessing.Document();
+                WordProcessing.Body body = mainPart.Document.AppendChild(new WordProcessing.Body());
+
+                // Заголовок
+                body.Append(CreateTitleParagraph("Отчет"));
+                body.Append(CreateSubtitleParagraph("Движения оборудования"));
+
+                // Таблица
+                WordProcessing.Table table = CreateTable();
+
+                // Заголовок таблицы
+                WordProcessing.TableRow headerRow = new WordProcessing.TableRow();
+                headerRow.Append(CreateTableCell("ID", true));
+                headerRow.Append(CreateTableCell("Оборудование", true));
+                headerRow.Append(CreateTableCell("Дата", true));
+                headerRow.Append(CreateTableCell("Кол-во", true));
+                headerRow.Append(CreateTableCell("Тип", true));
+                headerRow.Append(CreateTableCell("Поставщик", true));
+                headerRow.Append(CreateTableCell("Сотрудник", true));
+                headerRow.Append(CreateTableCell("Примечания", true));
+                table.Append(headerRow);
+
+                // Данные
+                foreach (DataRow row in data.Rows)
+                {
+                    WordProcessing.TableRow dataRow = new WordProcessing.TableRow();
+                    dataRow.Append(CreateTableCell(row["MovementID"].ToString() ?? "", false));
+                    dataRow.Append(CreateTableCell(row["EquipmentName"]?.ToString() ?? "", false));
+                    // Форматируем дату
+                    string movementDate = row["MovementDate"] != DBNull.Value 
+                        ? ((DateTime)row["MovementDate"]).ToString("dd.MM.yyyy") : "";
+                    dataRow.Append(CreateTableCell(movementDate, false));
+                    dataRow.Append(CreateTableCell(row["Quantity"]?.ToString() ?? "", false));
+                    dataRow.Append(CreateTableCell(row["MovementType"]?.ToString() ?? "", false));
+                    dataRow.Append(CreateTableCell(row["SupplierName"]?.ToString() ?? "", false));
+                    dataRow.Append(CreateTableCell(row["EmployeeName"]?.ToString() ?? "", false));
+                    dataRow.Append(CreateTableCell(row["Notes"]?.ToString() ?? "", false));
+                    table.Append(dataRow);
+                }
+
+                body.Append(table);
+                mainPart.Document.Save();
+            }
+        }
+
+        // ===============================================
+        // Вспомогательные методы для создания Word документов
+        // ===============================================
+
+        /// <summary>
+        /// Создаёт параграф с заголовком документа
+        /// </summary>
+        private WordProcessing.Paragraph CreateTitleParagraph(string title)
+        {
+            WordProcessing.Paragraph paragraph = new WordProcessing.Paragraph();
+            
+            WordProcessing.ParagraphProperties props = new WordProcessing.ParagraphProperties();
+            props.Append(new WordProcessing.Justification() { Val = WordProcessing.JustificationValues.Center });
+            props.Append(new WordProcessing.SpacingBetweenLines() { After = "400" });
+            paragraph.Append(props);
+
+            WordProcessing.Run run = new WordProcessing.Run();
+            WordProcessing.RunProperties runProps = new WordProcessing.RunProperties();
+            runProps.Append(new WordProcessing.Bold());
+            runProps.Append(new WordProcessing.FontSize() { Val = "56" }); // 28pt
+            run.Append(runProps);
+            run.Append(new WordProcessing.Text(title));
+            
+            paragraph.Append(run);
+            return paragraph;
+        }
+
+        /// <summary>
+        /// Создаёт параграф с подзаголовком
+        /// </summary>
+        private WordProcessing.Paragraph CreateSubtitleParagraph(string subtitle)
+        {
+            WordProcessing.Paragraph paragraph = new WordProcessing.Paragraph();
+            
+            WordProcessing.ParagraphProperties props = new WordProcessing.ParagraphProperties();
+            props.Append(new WordProcessing.SpacingBetweenLines() { After = "200" });
+            paragraph.Append(props);
+
+            WordProcessing.Run run = new WordProcessing.Run();
+            WordProcessing.RunProperties runProps = new WordProcessing.RunProperties();
+            runProps.Append(new WordProcessing.Bold());
+            runProps.Append(new WordProcessing.FontSize() { Val = "32" }); // 16pt
+            run.Append(runProps);
+            run.Append(new WordProcessing.Text(subtitle));
+            
+            paragraph.Append(run);
+            return paragraph;
+        }
+
+        /// <summary>
+        /// Создаёт таблицу Word с базовыми настройками (границы, ширина)
+        /// </summary>
+        private WordProcessing.Table CreateTable()
+        {
+            WordProcessing.Table table = new WordProcessing.Table();
+
+            WordProcessing.TableProperties tableProps = new WordProcessing.TableProperties();
+            WordProcessing.TableBorders tableBorders = new WordProcessing.TableBorders(
+                new WordProcessing.TopBorder() { Val = WordProcessing.BorderValues.Single, Size = 4 },
+                new WordProcessing.BottomBorder() { Val = WordProcessing.BorderValues.Single, Size = 4 },
+                new WordProcessing.LeftBorder() { Val = WordProcessing.BorderValues.Single, Size = 4 },
+                new WordProcessing.RightBorder() { Val = WordProcessing.BorderValues.Single, Size = 4 },
+                new WordProcessing.InsideHorizontalBorder() { Val = WordProcessing.BorderValues.Single, Size = 4 },
+                new WordProcessing.InsideVerticalBorder() { Val = WordProcessing.BorderValues.Single, Size = 4 }
+            );
+            tableProps.Append(tableBorders);
+            tableProps.Append(new WordProcessing.TableWidth() { Width = "5000", Type = WordProcessing.TableWidthUnitValues.Pct });
+            table.Append(tableProps);
+
+            return table;
+        }
+
+        // ===============================================
         // Методы для работы с таблицей Employees
         // ===============================================
 
