@@ -17,7 +17,8 @@ using Microsoft.Win32;
 // Пространства имён для работы с Word документами (OpenXML)
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Wordprocessing;
+// Используем алиас для избежания конфликта имён с System.Windows.Documents
+using WordProcessing = DocumentFormat.OpenXml.Wordprocessing;
 
 namespace WpfApp9
 {
@@ -303,31 +304,31 @@ namespace WpfApp9
             {
                 // Добавляем основную часть документа
                 MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
-                mainPart.Document = new Document();
-                Body body = mainPart.Document.AppendChild(new Body());
+                mainPart.Document = new WordProcessing.Document();
+                WordProcessing.Body body = mainPart.Document.AppendChild(new WordProcessing.Body());
 
                 // Создаём параграф с заголовком "Отчет"
-                Paragraph titleParagraph = new Paragraph();
+                WordProcessing.Paragraph titleParagraph = new WordProcessing.Paragraph();
                 
                 // Настройки параграфа - выравнивание по центру
-                ParagraphProperties paragraphProperties = new ParagraphProperties();
-                Justification justification = new Justification() { Val = JustificationValues.Center };
+                WordProcessing.ParagraphProperties paragraphProperties = new WordProcessing.ParagraphProperties();
+                WordProcessing.Justification justification = new WordProcessing.Justification() { Val = WordProcessing.JustificationValues.Center };
                 paragraphProperties.Append(justification);
                 titleParagraph.Append(paragraphProperties);
 
                 // Создаём текст заголовка
-                Run run = new Run();
+                WordProcessing.Run run = new WordProcessing.Run();
                 
                 // Настройки текста - жирный шрифт, размер 28pt (28 * 2 = 56 в OpenXML)
-                RunProperties runProperties = new RunProperties();
-                Bold bold = new Bold();
-                FontSize fontSize = new FontSize() { Val = "56" };
+                WordProcessing.RunProperties runProperties = new WordProcessing.RunProperties();
+                WordProcessing.Bold bold = new WordProcessing.Bold();
+                WordProcessing.FontSize fontSize = new WordProcessing.FontSize() { Val = "56" };
                 runProperties.Append(bold);
                 runProperties.Append(fontSize);
                 run.Append(runProperties);
                 
                 // Добавляем текст "Отчет"
-                Text text = new Text("Отчет");
+                WordProcessing.Text text = new WordProcessing.Text("Отчет");
                 run.Append(text);
                 
                 titleParagraph.Append(run);
