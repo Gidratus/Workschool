@@ -15,10 +15,13 @@
         <Style x:Key="ModernTextBox" TargetType="TextBox">
             <Setter Property="Height" Value="42"/>
             <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="Foreground" Value="#2D3748"/>
+            <Setter Property="CaretBrush" Value="#2D3748"/>
             <Setter Property="BorderBrush" Value="#E0E0E0"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Background" Value="#FAFAFA"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="12,0"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TextBox">
@@ -26,9 +29,13 @@
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 CornerRadius="8">
+                            <!-- Контейнер для текста -->
                             <ScrollViewer x:Name="PART_ContentHost" 
                                           VerticalAlignment="Center"
-                                          Margin="{TemplateBinding Padding}"/>
+                                          Margin="12,0"
+                                          Focusable="False"
+                                          HorizontalScrollBarVisibility="Hidden"
+                                          VerticalScrollBarVisibility="Hidden"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <!-- Эффект при фокусе на поле -->
@@ -50,10 +57,13 @@
         <Style x:Key="ModernPasswordBox" TargetType="PasswordBox">
             <Setter Property="Height" Value="42"/>
             <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="Foreground" Value="#2D3748"/>
+            <Setter Property="CaretBrush" Value="#2D3748"/>
             <Setter Property="BorderBrush" Value="#E0E0E0"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Background" Value="#FAFAFA"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="12,0"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="PasswordBox">
@@ -61,9 +71,13 @@
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 CornerRadius="8">
+                            <!-- Контейнер для текста пароля -->
                             <ScrollViewer x:Name="PART_ContentHost" 
                                           VerticalAlignment="Center"
-                                          Margin="{TemplateBinding Padding}"/>
+                                          Margin="12,0"
+                                          Focusable="False"
+                                          HorizontalScrollBarVisibility="Hidden"
+                                          VerticalScrollBarVisibility="Hidden"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <!-- Эффект при фокусе на поле -->
