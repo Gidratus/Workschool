@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:WpfApp9"
         mc:Ignorable="d"
         Loaded="Window_Loaded"
-        Title="Авторизация" Height="550" Width="450"
+        Title="Авторизация" Height="700" Width="450"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize">
     
@@ -14,9 +14,9 @@
     <Window.Resources>
         <!-- Стиль для текстовых полей ввода -->
         <Style x:Key="ModernTextBox" TargetType="TextBox">
-            <Setter Property="Height" Value="45"/>
+            <Setter Property="Height" Value="40"/>
             <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Padding" Value="15,10"/>
+            <Setter Property="Padding" Value="12,8"/>
             <Setter Property="BorderBrush" Value="#E0E0E0"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Background" Value="#FAFAFA"/>
@@ -49,9 +49,9 @@
         
         <!-- Стиль для полей ввода пароля -->
         <Style x:Key="ModernPasswordBox" TargetType="PasswordBox">
-            <Setter Property="Height" Value="45"/>
+            <Setter Property="Height" Value="40"/>
             <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Padding" Value="15,10"/>
+            <Setter Property="Padding" Value="12,8"/>
             <Setter Property="BorderBrush" Value="#E0E0E0"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Background" Value="#FAFAFA"/>
@@ -84,8 +84,8 @@
         
         <!-- Стиль для основной кнопки входа -->
         <Style x:Key="PrimaryButton" TargetType="Button">
-            <Setter Property="Height" Value="50"/>
-            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="FontSize" Value="15"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -135,8 +135,8 @@
         
         <!-- Стиль для вторичной кнопки регистрации -->
         <Style x:Key="SecondaryButton" TargetType="Button">
-            <Setter Property="Height" Value="50"/>
-            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="FontSize" Value="15"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Foreground" Value="#667EEA"/>
             <Setter Property="Background" Value="Transparent"/>
@@ -183,10 +183,11 @@
         <!-- Белая карточка формы авторизации -->
         <Border Background="White" 
                 CornerRadius="20" 
-                Margin="40"
+                Margin="30"
                 VerticalAlignment="Center"
                 HorizontalAlignment="Center"
-                Width="350">
+                Width="370"
+                MaxHeight="620">
             <!-- Тень карточки -->
             <Border.Effect>
                 <DropShadowEffect BlurRadius="30" 
@@ -195,81 +196,85 @@
                                   Color="#000000"/>
             </Border.Effect>
             
-            <StackPanel Margin="35,40">
+            <!-- Скроллируемое содержимое формы -->
+            <ScrollViewer VerticalScrollBarVisibility="Auto" 
+                          HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Margin="35,30">
                 <!-- Иконка пользователя -->
                 <Border Background="#F0F4FF" 
-                        Width="80" Height="80" 
-                        CornerRadius="40" 
+                        Width="70" Height="70" 
+                        CornerRadius="35" 
                         HorizontalAlignment="Center"
-                        Margin="0,0,0,20">
+                        Margin="0,0,0,15">
                     <TextBlock Text="👤" 
-                               FontSize="36" 
+                               FontSize="32" 
                                HorizontalAlignment="Center" 
                                VerticalAlignment="Center"/>
                 </Border>
                 
                 <!-- Заголовок формы -->
                 <TextBlock Text="Добро пожаловать!" 
-                           FontSize="24" 
+                           FontSize="22" 
                            FontWeight="Bold" 
                            HorizontalAlignment="Center"
                            Foreground="#2D3748"
-                           Margin="0,0,0,5"/>
+                           Margin="0,0,0,3"/>
                 
                 <!-- Подзаголовок формы -->
                 <TextBlock Text="Войдите в свой аккаунт" 
-                           FontSize="14" 
+                           FontSize="13" 
                            HorizontalAlignment="Center"
                            Foreground="#718096"
-                           Margin="0,0,0,30"/>
+                           Margin="0,0,0,20"/>
                 
                 <!-- Метка поля Фамилия -->
                 <TextBlock Text="Фамилия" 
-                           FontSize="13" 
+                           FontSize="12" 
                            FontWeight="SemiBold"
                            Foreground="#4A5568"
-                           Margin="0,0,0,8"/>
+                           Margin="0,0,0,5"/>
                 
                 <!-- Поле ввода фамилии -->
                 <TextBox x:Name="LastNameTextBox" 
                          Style="{StaticResource ModernTextBox}"
-                         Margin="0,0,0,15"/>
+                         Margin="0,0,0,12"/>
                 
                 <!-- Метка поля Имя -->
                 <TextBlock Text="Имя" 
-                           FontSize="13" 
+                           FontSize="12" 
                            FontWeight="SemiBold"
                            Foreground="#4A5568"
-                           Margin="0,0,0,8"/>
+                           Margin="0,0,0,5"/>
                 
                 <!-- Поле ввода имени -->
                 <TextBox x:Name="FirstnameTextbox" 
                          Style="{StaticResource ModernTextBox}"
-                         Margin="0,0,0,15"/>
+                         Margin="0,0,0,12"/>
                 
                 <!-- Метка поля Пароль -->
                 <TextBlock Text="Пароль" 
-                           FontSize="13" 
+                           FontSize="12" 
                            FontWeight="SemiBold"
                            Foreground="#4A5568"
-                           Margin="0,0,0,8"/>
+                           Margin="0,0,0,5"/>
                 
                 <!-- Поле ввода пароля -->
                 <PasswordBox x:Name="PasswordTextbox" 
                              Style="{StaticResource ModernPasswordBox}"
-                             Margin="0,0,0,25"/>
+                             Margin="0,0,0,20"/>
                 
                 <!-- Кнопка входа -->
                 <Button Content="Войти" 
                         Style="{StaticResource PrimaryButton}"
                         Click="OpenSecondWindowButton_Click"
-                        Margin="0,0,0,15"/>
+                        Margin="0,0,0,12"/>
                 
                 <!-- Кнопка регистрации -->
                 <Button Content="Зарегистрироваться" 
                         Style="{StaticResource SecondaryButton}"
                         Click="OpenRegWindowButton_Click"/>
             </StackPanel>
+            </ScrollViewer>
         </Border>
     </Grid>
 </Window>
