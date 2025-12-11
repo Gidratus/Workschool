@@ -5,364 +5,597 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp9"
         mc:Ignorable="d"
-        Title="Административная Панель" Height="600" Width="900">
+        Title="Административная Панель" Height="700" Width="1050"
+        WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <Style x:Key="AddButton" TargetType="Button">
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" CornerRadius="6">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#4CAF50" Offset="0"/>
+                                    <GradientStop Color="#2E7D32" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#43A047" Offset="0"/>
+                                            <GradientStop Color="#1B5E20" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="UpdateButton" TargetType="Button">
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" CornerRadius="6">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#667EEA" Offset="0"/>
+                                    <GradientStop Color="#764BA2" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#5A6FD6" Offset="0"/>
+                                            <GradientStop Color="#6A4190" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="DeleteButton" TargetType="Button">
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" CornerRadius="6">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#f44336" Offset="0"/>
+                                    <GradientStop Color="#c62828" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#e53935" Offset="0"/>
+                                            <GradientStop Color="#b71c1c" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ClearButton" TargetType="Button">
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" CornerRadius="6">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#78909C" Offset="0"/>
+                                    <GradientStop Color="#546E7A" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#607D8B" Offset="0"/>
+                                            <GradientStop Color="#455A64" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="RefreshButton" TargetType="Button">
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" CornerRadius="6">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#FF9800" Offset="0"/>
+                                    <GradientStop Color="#F57C00" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#FB8C00" Offset="0"/>
+                                            <GradientStop Color="#EF6C00" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="WordButton" TargetType="Button">
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" CornerRadius="6">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#1565C0" Offset="0"/>
+                                    <GradientStop Color="#0D47A1" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#1976D2" Offset="0"/>
+                                            <GradientStop Color="#1565C0" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="TabItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Border x:Name="Border" 
+                                Background="#E8EAF6" 
+                                BorderThickness="0" 
+                                CornerRadius="8,8,0,0" 
+                                Margin="2,0,2,0"
+                                Padding="12,8">
+                            <ContentPresenter x:Name="ContentSite"
+                                              ContentSource="Header"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Border" Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                            <GradientStop Color="#667EEA" Offset="0"/>
+                                            <GradientStop Color="#764BA2" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected" Value="False"/>
+                                    <Condition Property="IsMouseOver" Value="True"/>
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="Border" Property="Background" Value="#C5CAE9"/>
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#5C6BC0"/>
+        </Style>
+        <Style x:Key="AdminTextBox" TargetType="TextBox">
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="8,5"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#2D3748"/>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="#667EEA"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="ReadOnlyTextBox" TargetType="TextBox" BasedOn="{StaticResource AdminTextBox}">
+            <Setter Property="Background" Value="#F5F5F5"/>
+            <Setter Property="IsReadOnly" Value="True"/>
+        </Style>
+        <Style x:Key="AdminComboBox" TargetType="ComboBox">
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="8,5"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+        </Style>
+        <Style x:Key="AdminDatePicker" TargetType="DatePicker">
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+        </Style>
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#4A5568"/>
+            <Setter Property="Margin" Value="0,8,0,4"/>
+        </Style>
+    </Window.Resources>
     <Grid>
-        <TextBlock HorizontalAlignment="Center" Margin="0,20,0,0" TextWrapping="Wrap" 
-                   Text="Панель управления" FontSize="24" FontWeight="Bold"
-                   VerticalAlignment="Top" Height="40"/>
-
-        <TabControl Margin="20,70,20,20">
-            <TabItem Header="Управление Категориями" FontSize="14">
-                <Grid Background="#FFF5F5F5">
-                    <DataGrid x:Name="CategoriesDataGrid" 
-                              AutoGenerateColumns="False"
-                              IsReadOnly="True"
-                              SelectionMode="Single"
-                              Margin="10,10,320,10"
-                              CanUserAddRows="False"
-                              CanUserDeleteRows="False"
-                              SelectionChanged="CategoriesDataGrid_SelectionChanged">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="ID" Binding="{Binding CategoryID}" Width="60"/>
-                            <DataGridTextColumn Header="Название Категории" Binding="{Binding CategoryName}" Width="*"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-
-                    <!-- Панель редактирования категории с поддержкой скроллинга -->
-                    <Border BorderBrush="#CCCCCC" BorderThickness="1" Background="White"
-                            Margin="0,10,10,10" Width="300" HorizontalAlignment="Right">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto">
-                            <StackPanel Margin="15">
-                                <TextBlock Text="Редактирование Категории" FontSize="16" FontWeight="Bold" 
-                                           Margin="0,0,0,15"/>
-
-                                <!-- Поле ID (только для чтения) -->
-                                <TextBlock Text="ID:" Margin="0,5,0,3"/>
-                                <TextBox x:Name="CategoryIdTextBox" IsReadOnly="True" 
-                                         Background="#F0F0F0" Height="25" Margin="0,0,0,10"/>
-
-                                <!-- Поле названия категории -->
-                                <TextBlock Text="Название Категории:" Margin="0,5,0,3"/>
-                                <TextBox x:Name="CategoryNameTextBox" Height="25" Margin="0,0,0,15"/>
-
-                                <!-- Кнопки управления -->
-                                <Button Content="Добавить" Click="AddButton_Click" 
-                                        Height="35" Margin="0,5" FontSize="14"
-                                        Background="#4CAF50" Foreground="White" BorderThickness="0"/>
-                                
-                                <Button Content="Обновить" Click="UpdateButton_Click" 
-                                        Height="35" Margin="0,5" FontSize="14"
-                                        Background="#2196F3" Foreground="White" BorderThickness="0"/>
-                                
-                                <Button Content="Удалить" Click="DeleteButton_Click" 
-                                        Height="35" Margin="0,5" FontSize="14"
-                                        Background="#f44336" Foreground="White" BorderThickness="0"/>
-                                
-                                <Button Content="Очистить поля" Click="ClearButton_Click" 
-                                        Height="35" Margin="0,15,0,5" FontSize="14"
-                                        Background="#9E9E9E" Foreground="White" BorderThickness="0"/>
-                                
-                                <Button Content="Обновить список" Click="RefreshButton_Click" 
-                                        Height="35" Margin="0,5" FontSize="14"
-                                        Background="#FF9800" Foreground="White" BorderThickness="0"/>
-                                
-                                <!-- Кнопка для сохранения отчета в Word -->
-                                <Button Content="Сохранить Word" Click="SaveCategoriesWordButton_Click" 
-                                        Height="35" Margin="0,15,0,5" FontSize="14"
-                                        Background="#1565C0" Foreground="White" BorderThickness="0"/>
-                            </StackPanel>
-                        </ScrollViewer>
-                    </Border>
-                </Grid>
-            </TabItem>
-
-            <TabItem x:Name="EmployeesTabItem" Header="Управление Сотрудниками" FontSize="14">
-                <Grid Background="#FFF5F5F5">
-                    <DataGrid x:Name="EmployeesDataGrid" 
-                              AutoGenerateColumns="False"
-                              IsReadOnly="True"
-                              SelectionMode="Single"
-                              Margin="10,10,400,10"
-                              CanUserAddRows="False"
-                              CanUserDeleteRows="False"
-                              SelectionChanged="EmployeesDataGrid_SelectionChanged">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="ID" Binding="{Binding EmployeeID}" Width="50"/>
-                            <DataGridTextColumn Header="Имя" Binding="{Binding FirstName}" Width="120"/>
-                            <DataGridTextColumn Header="Фамилия" Binding="{Binding LastName}" Width="120"/>
-                            <DataGridTextColumn Header="Должность" Binding="{Binding Position}" Width="150"/>
-                            <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="*"/>
-                            <DataGridTextColumn Header="Телефон" Binding="{Binding Phone}" Width="120"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-
-                    <!-- Панель редактирования сотрудника с поддержкой скроллинга -->
-                    <Border BorderBrush="#CCCCCC" BorderThickness="1" Background="White"
-                            Margin="0,10,10,10" Width="380" HorizontalAlignment="Right">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto">
-                            <StackPanel Margin="15">
-                                <TextBlock Text="Редактирование Сотрудника" FontSize="16" FontWeight="Bold" 
-                                           Margin="0,0,0,15"/>
-
-                                <TextBlock Text="ID:" Margin="0,5,0,3"/>
-                                <TextBox x:Name="EmployeeIdTextBox" IsReadOnly="True" 
-                                         Background="#F0F0F0" Height="25" Margin="0,0,0,10"/>
-
-                                <TextBlock Text="Имя:" Margin="0,5,0,3"/>
-                                <TextBox x:Name="EmployeeFirstNameTextBox" Height="25" Margin="0,0,0,10"/>
-
-                                <TextBlock Text="Фамилия:" Margin="0,5,0,3"/>
-                                <TextBox x:Name="EmployeeLastNameTextBox" Height="25" Margin="0,0,0,10"/>
-
-                                <TextBlock Text="Должность:" Margin="0,5,0,3"/>
-                                <TextBox x:Name="EmployeePositionTextBox" Height="25" Margin="0,0,0,10"/>
-
-                                <TextBlock Text="Email:" Margin="0,5,0,3"/>
-                                <TextBox x:Name="EmployeeEmailTextBox" Height="25" Margin="0,0,0,10"/>
-
-                                <TextBlock Text="Телефон:" Margin="0,5,0,3"/>
-                                <TextBox x:Name="EmployeePhoneTextBox" Height="25" Margin="0,0,0,10"/>
-
-                                <TextBlock Text="Пароль:" Margin="0,5,0,3"/>
-                                <TextBox x:Name="EmployeePasswordTextBox" Height="25" Margin="0,0,0,15"/>
-
-                                <Button Content="Добавить" Click="AddEmployeeButton_Click" 
-                                        Height="35" Margin="0,5" FontSize="14"
-                                        Background="#4CAF50" Foreground="White" BorderThickness="0"/>
-                                
-                                <Button Content="Обновить" Click="UpdateEmployeeButton_Click" 
-                                        Height="35" Margin="0,5" FontSize="14"
-                                        Background="#2196F3" Foreground="White" BorderThickness="0"/>
-                                
-                                <Button Content="Удалить" Click="DeleteEmployeeButton_Click" 
-                                        Height="35" Margin="0,5" FontSize="14"
-                                        Background="#f44336" Foreground="White" BorderThickness="0"/>
-                                
-                                <Button Content="Очистить поля" Click="ClearEmployeeButton_Click" 
-                                        Height="35" Margin="0,5" FontSize="14"
-                                        Background="#9E9E9E" Foreground="White" BorderThickness="0"/>
-                                
-                                <Button Content="Обновить список" Click="RefreshEmployeeButton_Click" 
-                                        Height="35" Margin="0,5" FontSize="14"
-                                        Background="#FF9800" Foreground="White" BorderThickness="0"/>
-                                
-                                <!-- Кнопка для сохранения отчета в Word -->
-                                <Button Content="Сохранить Word" Click="SaveEmployeesWordButton_Click" 
-                                        Height="35" Margin="0,15,0,5" FontSize="14"
-                                        Background="#1565C0" Foreground="White" BorderThickness="0"/>
-                            </StackPanel>
-                        </ScrollViewer>
-                    </Border>
-                </Grid>
-            </TabItem>
-
-            <!-- Вкладка для управления оборудованием -->
-            <TabItem Header="Управление Equipment" FontSize="14">
-                <Grid Background="#FFF5F5F5">
-                    <!-- Таблица с оборудованием -->
-                    <DataGrid x:Name="EquipmentDataGrid" 
-                              AutoGenerateColumns="False"
-                              IsReadOnly="True"
-                              SelectionMode="Single"
-                              Margin="10,10,380,10"
-                              CanUserAddRows="False"
-                              CanUserDeleteRows="False"
-                              SelectionChanged="EquipmentDataGrid_SelectionChanged">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="ID" Binding="{Binding EquipmentID}" Width="40"/>
-                            <DataGridTextColumn Header="Название" Binding="{Binding EquipmentName}" Width="120"/>
-                            <DataGridTextColumn Header="Категория" Binding="{Binding CategoryID}" Width="70"/>
-                            <DataGridTextColumn Header="Производитель" Binding="{Binding Manufacturer}" Width="100"/>
-                            <DataGridTextColumn Header="Модель" Binding="{Binding Model}" Width="80"/>
-                            <DataGridTextColumn Header="Серийный №" Binding="{Binding SerialNumber}" Width="100"/>
-                            <DataGridTextColumn Header="Дата покупки" Binding="{Binding PurchaseDate, StringFormat=\{0:dd.MM.yyyy\}}" Width="90"/>
-                            <DataGridTextColumn Header="Гарантия до" Binding="{Binding WarrantyUntil, StringFormat=\{0:dd.MM.yyyy\}}" Width="90"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-
-                    <!-- Панель редактирования оборудования -->
-                    <Border BorderBrush="#CCCCCC" BorderThickness="1" Background="White"
-                            Margin="0,10,10,10" Width="360" HorizontalAlignment="Right">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto">
-                            <StackPanel Margin="15">
-                                <TextBlock Text="Редактирование Equipment" FontSize="16" FontWeight="Bold" 
-                                           Margin="0,0,0,15"/>
-
-                                <!-- Поле ID (только для чтения) -->
-                                <TextBlock Text="ID:" Margin="0,5,0,3"/>
-                                <TextBox x:Name="EquipmentIdTextBox" IsReadOnly="True" 
-                                         Background="#F0F0F0" Height="25" Margin="0,0,0,8"/>
-
-                                <!-- Поле названия оборудования -->
-                                <TextBlock Text="Название оборудования:" Margin="0,5,0,3"/>
-                                <TextBox x:Name="EquipmentNameTextBox" Height="25" Margin="0,0,0,8"/>
-
-                                <!-- Поле категории - выпадающий список -->
-                                <TextBlock Text="Категория:" Margin="0,5,0,3"/>
-                                <ComboBox x:Name="EquipmentCategoryComboBox" Height="25" Margin="0,0,0,8"
-                                          DisplayMemberPath="CategoryName" SelectedValuePath="CategoryID"/>
-
-                                <!-- Поле производителя -->
-                                <TextBlock Text="Производитель:" Margin="0,5,0,3"/>
-                                <TextBox x:Name="EquipmentManufacturerTextBox" Height="25" Margin="0,0,0,8"/>
-
-                                <!-- Поле модели -->
-                                <TextBlock Text="Модель:" Margin="0,5,0,3"/>
-                                <TextBox x:Name="EquipmentModelTextBox" Height="25" Margin="0,0,0,8"/>
-
-                                <!-- Поле серийного номера -->
-                                <TextBlock Text="Серийный номер:" Margin="0,5,0,3"/>
-                                <TextBox x:Name="EquipmentSerialNumberTextBox" Height="25" Margin="0,0,0,8"/>
-
-                                <!-- Поле даты покупки -->
-                                <TextBlock Text="Дата покупки:" Margin="0,5,0,3"/>
-                                <DatePicker x:Name="EquipmentPurchaseDatePicker" Height="25" Margin="0,0,0,8"/>
-
-                                <!-- Поле гарантии -->
-                                <TextBlock Text="Гарантия до:" Margin="0,5,0,3"/>
-                                <DatePicker x:Name="EquipmentWarrantyUntilPicker" Height="25" Margin="0,0,0,15"/>
-
-                                <!-- Кнопки управления -->
-                                <Button Content="Добавить" Click="AddEquipmentButton_Click" 
-                                        Height="35" Margin="0,5" FontSize="14"
-                                        Background="#4CAF50" Foreground="White" BorderThickness="0"/>
-                                
-                                <Button Content="Обновить" Click="UpdateEquipmentButton_Click" 
-                                        Height="35" Margin="0,5" FontSize="14"
-                                        Background="#2196F3" Foreground="White" BorderThickness="0"/>
-                                
-                                <Button Content="Удалить" Click="DeleteEquipmentButton_Click" 
-                                        Height="35" Margin="0,5" FontSize="14"
-                                        Background="#f44336" Foreground="White" BorderThickness="0"/>
-                                
-                                <Button Content="Очистить поля" Click="ClearEquipmentButton_Click" 
-                                        Height="35" Margin="0,15,0,5" FontSize="14"
-                                        Background="#9E9E9E" Foreground="White" BorderThickness="0"/>
-                                
-                                <Button Content="Обновить список" Click="RefreshEquipmentButton_Click" 
-                                        Height="35" Margin="0,5" FontSize="14"
-                                        Background="#FF9800" Foreground="White" BorderThickness="0"/>
-                                
-                                <!-- Кнопка для сохранения отчета в Word -->
-                                <Button Content="Сохранить Word" Click="SaveEquipmentWordButton_Click" 
-                                        Height="35" Margin="0,15,0,5" FontSize="14"
-                                        Background="#1565C0" Foreground="White" BorderThickness="0"/>
-                            </StackPanel>
-                        </ScrollViewer>
-                    </Border>
-                </Grid>
-            </TabItem>
-
-            <!-- Вкладка для управления движениями оборудования -->
-            <TabItem Header="Движения оборудования" FontSize="14">
-                <Grid Background="#FFF5F5F5">
-                    <!-- Таблица с движениями оборудования -->
-                    <DataGrid x:Name="MovementDataGrid" 
-                              AutoGenerateColumns="False"
-                              IsReadOnly="True"
-                              SelectionMode="Single"
-                              Margin="10,10,380,10"
-                              CanUserAddRows="False"
-                              CanUserDeleteRows="False"
-                              SelectionChanged="MovementDataGrid_SelectionChanged">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="ID" Binding="{Binding MovementID}" Width="40"/>
-                            <DataGridTextColumn Header="Оборудование" Binding="{Binding EquipmentName}" Width="120"/>
-                            <DataGridTextColumn Header="Дата" Binding="{Binding MovementDate, StringFormat=\{0:dd.MM.yyyy\}}" Width="90"/>
-                            <DataGridTextColumn Header="Кол-во" Binding="{Binding Quantity}" Width="60"/>
-                            <DataGridTextColumn Header="Тип движения" Binding="{Binding MovementType}" Width="100"/>
-                            <DataGridTextColumn Header="Поставщик" Binding="{Binding SupplierName}" Width="100"/>
-                            <DataGridTextColumn Header="Сотрудник" Binding="{Binding EmployeeName}" Width="100"/>
-                            <DataGridTextColumn Header="Примечания" Binding="{Binding Notes}" Width="*"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-
-                    <!-- Панель редактирования движений -->
-                    <Border BorderBrush="#CCCCCC" BorderThickness="1" Background="White"
-                            Margin="0,10,10,10" Width="360" HorizontalAlignment="Right">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto">
-                            <StackPanel Margin="15">
-                                <TextBlock Text="Редактирование движения" FontSize="16" FontWeight="Bold" 
-                                           Margin="0,0,0,15"/>
-
-                                <!-- Поле ID (только для чтения) -->
-                                <TextBlock Text="ID:" Margin="0,5,0,3"/>
-                                <TextBox x:Name="MovementIdTextBox" IsReadOnly="True" 
-                                         Background="#F0F0F0" Height="25" Margin="0,0,0,8"/>
-
-                                <!-- Выбор оборудования -->
-                                <TextBlock Text="Оборудование:" Margin="0,5,0,3"/>
-                                <ComboBox x:Name="MovementEquipmentComboBox" Height="25" Margin="0,0,0,8"
-                                          DisplayMemberPath="EquipmentName" SelectedValuePath="EquipmentID"/>
-
-                                <!-- Дата движения -->
-                                <TextBlock Text="Дата движения:" Margin="0,5,0,3"/>
-                                <DatePicker x:Name="MovementDatePicker" Height="25" Margin="0,0,0,8"/>
-
-                                <!-- Количество -->
-                                <TextBlock Text="Количество:" Margin="0,5,0,3"/>
-                                <TextBox x:Name="MovementQuantityTextBox" Height="25" Margin="0,0,0,8"/>
-
-                                <!-- Тип движения (IN - поступление, OUT - списание) -->
-                                <TextBlock Text="Тип движения:" Margin="0,5,0,3"/>
-                                <ComboBox x:Name="MovementTypeComboBox" Height="25" Margin="0,0,0,8">
-                                    <ComboBoxItem Content="IN"/>
-                                    <ComboBoxItem Content="OUT"/>
-                                </ComboBox>
-
-                                <!-- Выбор поставщика -->
-                                <TextBlock Text="Поставщик:" Margin="0,5,0,3"/>
-                                <ComboBox x:Name="MovementSupplierComboBox" Height="25" Margin="0,0,0,8"
-                                          DisplayMemberPath="SupplierName" SelectedValuePath="SupplierID"/>
-
-                                <!-- Выбор сотрудника -->
-                                <TextBlock Text="Сотрудник:" Margin="0,5,0,3"/>
-                                <ComboBox x:Name="MovementEmployeeComboBox" Height="25" Margin="0,0,0,8"
-                                          DisplayMemberPath="FullName" SelectedValuePath="EmployeeID"/>
-
-                                <!-- Примечания -->
-                                <TextBlock Text="Примечания:" Margin="0,5,0,3"/>
-                                <TextBox x:Name="MovementNotesTextBox" Height="60" Margin="0,0,0,15"
-                                         TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
-
-                                <!-- Кнопки управления -->
-                                <Button Content="Добавить" Click="AddMovementButton_Click" 
-                                        Height="35" Margin="0,5" FontSize="14"
-                                        Background="#4CAF50" Foreground="White" BorderThickness="0"/>
-                                
-                                <Button Content="Обновить" Click="UpdateMovementButton_Click" 
-                                        Height="35" Margin="0,5" FontSize="14"
-                                        Background="#2196F3" Foreground="White" BorderThickness="0"/>
-                                
-                                <Button Content="Удалить" Click="DeleteMovementButton_Click" 
-                                        Height="35" Margin="0,5" FontSize="14"
-                                        Background="#f44336" Foreground="White" BorderThickness="0"/>
-                                
-                                <Button Content="Очистить поля" Click="ClearMovementButton_Click" 
-                                        Height="35" Margin="0,15,0,5" FontSize="14"
-                                        Background="#9E9E9E" Foreground="White" BorderThickness="0"/>
-                                
-                                <Button Content="Обновить список" Click="RefreshMovementButton_Click" 
-                                        Height="35" Margin="0,5" FontSize="14"
-                                        Background="#FF9800" Foreground="White" BorderThickness="0"/>
-                                
-                                <!-- Кнопка для сохранения отчета в Word -->
-                                <Button Content="Сохранить Word" Click="SaveMovementsWordButton_Click" 
-                                        Height="35" Margin="0,15,0,5" FontSize="14"
-                                        Background="#1565C0" Foreground="White" BorderThickness="0"/>
-                            </StackPanel>
-                        </ScrollViewer>
-                    </Border>
-                </Grid>
-            </TabItem>
-
-            <TabItem Header="Другие настройки" FontSize="14">
-                <Grid Background="#FFF5F5F5">
-                    <TextBlock Text="Дополнительные административные функции будут добавлены здесь" 
-                               HorizontalAlignment="Center" VerticalAlignment="Center"
-                               FontSize="16" Foreground="#888888"/>
-                </Grid>
-            </TabItem>
-        </TabControl>
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="#F5F7FA" Offset="0"/>
+                <GradientStop Color="#E8EAF6" Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0" Margin="15,15,15,10">
+            <Border Background="White" CornerRadius="15" Padding="20,12">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="15" ShadowDepth="2" Opacity="0.1" Color="#000000"/>
+                </Border.Effect>
+                <TextBlock Text="⚙️ Панель управления" 
+                           FontSize="24" FontWeight="Bold"
+                           Foreground="#2D3748"
+                           HorizontalAlignment="Center"/>
+            </Border>
+        </Border>
+        <Border Grid.Row="1" Margin="15,0,15,15">
+            <Border Background="White" CornerRadius="15" Padding="10">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="15" ShadowDepth="2" Opacity="0.1" Color="#000000"/>
+                </Border.Effect>
+                <TabControl Background="Transparent" BorderThickness="0">
+                    <TabItem Header="📁 Категории">
+                        <Grid Background="Transparent" Margin="5">
+                            <DataGrid x:Name="CategoriesDataGrid" 
+                                      AutoGenerateColumns="False"
+                                      IsReadOnly="True"
+                                      SelectionMode="Single"
+                                      Margin="0,0,320,0"
+                                      CanUserAddRows="False"
+                                      CanUserDeleteRows="False"
+                                      SelectionChanged="CategoriesDataGrid_SelectionChanged"
+                                      Background="White"
+                                      BorderThickness="1"
+                                      BorderBrush="#E0E0E0"
+                                      GridLinesVisibility="Horizontal"
+                                      HorizontalGridLinesBrush="#F0F0F0"
+                                      RowBackground="White"
+                                      AlternatingRowBackground="#FAFAFA">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="ID" Binding="{Binding CategoryID}" Width="60"/>
+                                    <DataGridTextColumn Header="Название Категории" Binding="{Binding CategoryName}" Width="*"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            <Border Background="#FAFAFA" CornerRadius="10"
+                                    Margin="0,0,0,0" Width="300" HorizontalAlignment="Right">
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="10" ShadowDepth="1" Opacity="0.1"/>
+                                </Border.Effect>
+                                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                    <StackPanel Margin="15">
+                                        <TextBlock Text="✏️ Редактирование" FontSize="16" FontWeight="Bold" 
+                                                   Foreground="#2D3748" Margin="0,0,0,15"/>
+                                        <TextBlock Text="ID:" Style="{StaticResource FieldLabel}"/>
+                                        <TextBox x:Name="CategoryIdTextBox" Style="{StaticResource ReadOnlyTextBox}"/>
+                                        <TextBlock Text="Название категории:" Style="{StaticResource FieldLabel}"/>
+                                        <TextBox x:Name="CategoryNameTextBox" Style="{StaticResource AdminTextBox}" Margin="0,0,0,15"/>
+                                        <Button Content="➕ Добавить" Click="AddButton_Click" Style="{StaticResource AddButton}" Margin="0,5"/>
+                                        <Button Content="💾 Обновить" Click="UpdateButton_Click" Style="{StaticResource UpdateButton}" Margin="0,5"/>
+                                        <Button Content="🗑️ Удалить" Click="DeleteButton_Click" Style="{StaticResource DeleteButton}" Margin="0,5"/>
+                                        <Button Content="🧹 Очистить" Click="ClearButton_Click" Style="{StaticResource ClearButton}" Margin="0,15,0,5"/>
+                                        <Button Content="🔄 Обновить список" Click="RefreshButton_Click" Style="{StaticResource RefreshButton}" Margin="0,5"/>
+                                        <Button Content="📄 Сохранить Word" Click="SaveCategoriesWordButton_Click" Style="{StaticResource WordButton}" Margin="0,15,0,5"/>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </Border>
+                        </Grid>
+                    </TabItem>
+                    <TabItem x:Name="EmployeesTabItem" Header="👥 Сотрудники">
+                        <Grid Background="Transparent" Margin="5">
+                            <DataGrid x:Name="EmployeesDataGrid" 
+                                      AutoGenerateColumns="False"
+                                      IsReadOnly="True"
+                                      SelectionMode="Single"
+                                      Margin="0,0,360,0"
+                                      CanUserAddRows="False"
+                                      CanUserDeleteRows="False"
+                                      SelectionChanged="EmployeesDataGrid_SelectionChanged"
+                                      Background="White"
+                                      BorderThickness="1"
+                                      BorderBrush="#E0E0E0"
+                                      GridLinesVisibility="Horizontal"
+                                      HorizontalGridLinesBrush="#F0F0F0"
+                                      RowBackground="White"
+                                      AlternatingRowBackground="#FAFAFA">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="ID" Binding="{Binding EmployeeID}" Width="50"/>
+                                    <DataGridTextColumn Header="Имя" Binding="{Binding FirstName}" Width="100"/>
+                                    <DataGridTextColumn Header="Фамилия" Binding="{Binding LastName}" Width="100"/>
+                                    <DataGridTextColumn Header="Должность" Binding="{Binding Position}" Width="120"/>
+                                    <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="*"/>
+                                    <DataGridTextColumn Header="Телефон" Binding="{Binding Phone}" Width="110"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            <Border Background="#FAFAFA" CornerRadius="10"
+                                    Margin="0,0,0,0" Width="350" HorizontalAlignment="Right">
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="10" ShadowDepth="1" Opacity="0.1"/>
+                                </Border.Effect>
+                                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                    <StackPanel Margin="15">
+                                        <TextBlock Text="✏️ Редактирование" FontSize="16" FontWeight="Bold" 
+                                                   Foreground="#2D3748" Margin="0,0,0,10"/>
+                                        <TextBlock Text="ID:" Style="{StaticResource FieldLabel}"/>
+                                        <TextBox x:Name="EmployeeIdTextBox" Style="{StaticResource ReadOnlyTextBox}"/>
+                                        <TextBlock Text="Имя:" Style="{StaticResource FieldLabel}"/>
+                                        <TextBox x:Name="EmployeeFirstNameTextBox" Style="{StaticResource AdminTextBox}"/>
+                                        <TextBlock Text="Фамилия:" Style="{StaticResource FieldLabel}"/>
+                                        <TextBox x:Name="EmployeeLastNameTextBox" Style="{StaticResource AdminTextBox}"/>
+                                        <TextBlock Text="Должность:" Style="{StaticResource FieldLabel}"/>
+                                        <TextBox x:Name="EmployeePositionTextBox" Style="{StaticResource AdminTextBox}"/>
+                                        <TextBlock Text="Email:" Style="{StaticResource FieldLabel}"/>
+                                        <TextBox x:Name="EmployeeEmailTextBox" Style="{StaticResource AdminTextBox}"/>
+                                        <TextBlock Text="Телефон:" Style="{StaticResource FieldLabel}"/>
+                                        <TextBox x:Name="EmployeePhoneTextBox" Style="{StaticResource AdminTextBox}"/>
+                                        <TextBlock Text="Пароль:" Style="{StaticResource FieldLabel}"/>
+                                        <TextBox x:Name="EmployeePasswordTextBox" Style="{StaticResource AdminTextBox}" Margin="0,0,0,10"/>
+                                        <Button Content="➕ Добавить" Click="AddEmployeeButton_Click" Style="{StaticResource AddButton}" Margin="0,5"/>
+                                        <Button Content="💾 Обновить" Click="UpdateEmployeeButton_Click" Style="{StaticResource UpdateButton}" Margin="0,5"/>
+                                        <Button Content="🗑️ Удалить" Click="DeleteEmployeeButton_Click" Style="{StaticResource DeleteButton}" Margin="0,5"/>
+                                        <Button Content="🧹 Очистить" Click="ClearEmployeeButton_Click" Style="{StaticResource ClearButton}" Margin="0,5"/>
+                                        <Button Content="🔄 Обновить список" Click="RefreshEmployeeButton_Click" Style="{StaticResource RefreshButton}" Margin="0,5"/>
+                                        <Button Content="📄 Сохранить Word" Click="SaveEmployeesWordButton_Click" Style="{StaticResource WordButton}" Margin="0,10,0,5"/>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </Border>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="🔧 Оборудование">
+                        <Grid Background="Transparent" Margin="5">
+                            <DataGrid x:Name="EquipmentDataGrid" 
+                                      AutoGenerateColumns="False"
+                                      IsReadOnly="True"
+                                      SelectionMode="Single"
+                                      Margin="0,0,350,0"
+                                      CanUserAddRows="False"
+                                      CanUserDeleteRows="False"
+                                      SelectionChanged="EquipmentDataGrid_SelectionChanged"
+                                      Background="White"
+                                      BorderThickness="1"
+                                      BorderBrush="#E0E0E0"
+                                      GridLinesVisibility="Horizontal"
+                                      HorizontalGridLinesBrush="#F0F0F0"
+                                      RowBackground="White"
+                                      AlternatingRowBackground="#FAFAFA">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="ID" Binding="{Binding EquipmentID}" Width="40"/>
+                                    <DataGridTextColumn Header="Название" Binding="{Binding EquipmentName}" Width="110"/>
+                                    <DataGridTextColumn Header="Категория" Binding="{Binding CategoryID}" Width="70"/>
+                                    <DataGridTextColumn Header="Производитель" Binding="{Binding Manufacturer}" Width="100"/>
+                                    <DataGridTextColumn Header="Модель" Binding="{Binding Model}" Width="80"/>
+                                    <DataGridTextColumn Header="Серийный №" Binding="{Binding SerialNumber}" Width="90"/>
+                                    <DataGridTextColumn Header="Покупка" Binding="{Binding PurchaseDate, StringFormat=\{0:dd.MM.yyyy\}}" Width="80"/>
+                                    <DataGridTextColumn Header="Гарантия" Binding="{Binding WarrantyUntil, StringFormat=\{0:dd.MM.yyyy\}}" Width="80"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            <Border Background="#FAFAFA" CornerRadius="10"
+                                    Margin="0,0,0,0" Width="340" HorizontalAlignment="Right">
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="10" ShadowDepth="1" Opacity="0.1"/>
+                                </Border.Effect>
+                                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                    <StackPanel Margin="15">
+                                        <TextBlock Text="✏️ Редактирование" FontSize="16" FontWeight="Bold" 
+                                                   Foreground="#2D3748" Margin="0,0,0,10"/>
+                                        <TextBlock Text="ID:" Style="{StaticResource FieldLabel}"/>
+                                        <TextBox x:Name="EquipmentIdTextBox" Style="{StaticResource ReadOnlyTextBox}"/>
+                                        <TextBlock Text="Название:" Style="{StaticResource FieldLabel}"/>
+                                        <TextBox x:Name="EquipmentNameTextBox" Style="{StaticResource AdminTextBox}"/>
+                                        <TextBlock Text="Категория:" Style="{StaticResource FieldLabel}"/>
+                                        <ComboBox x:Name="EquipmentCategoryComboBox" Style="{StaticResource AdminComboBox}"
+                                                  DisplayMemberPath="CategoryName" SelectedValuePath="CategoryID"/>
+                                        <TextBlock Text="Производитель:" Style="{StaticResource FieldLabel}"/>
+                                        <TextBox x:Name="EquipmentManufacturerTextBox" Style="{StaticResource AdminTextBox}"/>
+                                        <TextBlock Text="Модель:" Style="{StaticResource FieldLabel}"/>
+                                        <TextBox x:Name="EquipmentModelTextBox" Style="{StaticResource AdminTextBox}"/>
+                                        <TextBlock Text="Серийный номер:" Style="{StaticResource FieldLabel}"/>
+                                        <TextBox x:Name="EquipmentSerialNumberTextBox" Style="{StaticResource AdminTextBox}"/>
+                                        <TextBlock Text="Дата покупки:" Style="{StaticResource FieldLabel}"/>
+                                        <DatePicker x:Name="EquipmentPurchaseDatePicker" Style="{StaticResource AdminDatePicker}"/>
+                                        <TextBlock Text="Гарантия до:" Style="{StaticResource FieldLabel}"/>
+                                        <DatePicker x:Name="EquipmentWarrantyUntilPicker" Style="{StaticResource AdminDatePicker}" Margin="0,0,0,10"/>
+                                        <Button Content="➕ Добавить" Click="AddEquipmentButton_Click" Style="{StaticResource AddButton}" Margin="0,5"/>
+                                        <Button Content="💾 Обновить" Click="UpdateEquipmentButton_Click" Style="{StaticResource UpdateButton}" Margin="0,5"/>
+                                        <Button Content="🗑️ Удалить" Click="DeleteEquipmentButton_Click" Style="{StaticResource DeleteButton}" Margin="0,5"/>
+                                        <Button Content="🧹 Очистить" Click="ClearEquipmentButton_Click" Style="{StaticResource ClearButton}" Margin="0,10,0,5"/>
+                                        <Button Content="🔄 Обновить список" Click="RefreshEquipmentButton_Click" Style="{StaticResource RefreshButton}" Margin="0,5"/>
+                                        <Button Content="📄 Сохранить Word" Click="SaveEquipmentWordButton_Click" Style="{StaticResource WordButton}" Margin="0,10,0,5"/>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </Border>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="📦 Движения">
+                        <Grid Background="Transparent" Margin="5">
+                            <DataGrid x:Name="MovementDataGrid" 
+                                      AutoGenerateColumns="False"
+                                      IsReadOnly="True"
+                                      SelectionMode="Single"
+                                      Margin="0,0,350,0"
+                                      CanUserAddRows="False"
+                                      CanUserDeleteRows="False"
+                                      SelectionChanged="MovementDataGrid_SelectionChanged"
+                                      Background="White"
+                                      BorderThickness="1"
+                                      BorderBrush="#E0E0E0"
+                                      GridLinesVisibility="Horizontal"
+                                      HorizontalGridLinesBrush="#F0F0F0"
+                                      RowBackground="White"
+                                      AlternatingRowBackground="#FAFAFA">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="ID" Binding="{Binding MovementID}" Width="40"/>
+                                    <DataGridTextColumn Header="Оборудование" Binding="{Binding EquipmentName}" Width="110"/>
+                                    <DataGridTextColumn Header="Дата" Binding="{Binding MovementDate, StringFormat=\{0:dd.MM.yyyy\}}" Width="85"/>
+                                    <DataGridTextColumn Header="Кол-во" Binding="{Binding Quantity}" Width="55"/>
+                                    <DataGridTextColumn Header="Тип" Binding="{Binding MovementType}" Width="70"/>
+                                    <DataGridTextColumn Header="Поставщик" Binding="{Binding SupplierName}" Width="100"/>
+                                    <DataGridTextColumn Header="Сотрудник" Binding="{Binding EmployeeName}" Width="100"/>
+                                    <DataGridTextColumn Header="Примечания" Binding="{Binding Notes}" Width="*"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            <Border Background="#FAFAFA" CornerRadius="10"
+                                    Margin="0,0,0,0" Width="340" HorizontalAlignment="Right">
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="10" ShadowDepth="1" Opacity="0.1"/>
+                                </Border.Effect>
+                                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                    <StackPanel Margin="15">
+                                        <TextBlock Text="✏️ Редактирование" FontSize="16" FontWeight="Bold" 
+                                                   Foreground="#2D3748" Margin="0,0,0,10"/>
+                                        <TextBlock Text="ID:" Style="{StaticResource FieldLabel}"/>
+                                        <TextBox x:Name="MovementIdTextBox" Style="{StaticResource ReadOnlyTextBox}"/>
+                                        <TextBlock Text="Оборудование:" Style="{StaticResource FieldLabel}"/>
+                                        <ComboBox x:Name="MovementEquipmentComboBox" Style="{StaticResource AdminComboBox}"
+                                                  DisplayMemberPath="EquipmentName" SelectedValuePath="EquipmentID"/>
+                                        <TextBlock Text="Дата движения:" Style="{StaticResource FieldLabel}"/>
+                                        <DatePicker x:Name="MovementDatePicker" Style="{StaticResource AdminDatePicker}"/>
+                                        <TextBlock Text="Количество:" Style="{StaticResource FieldLabel}"/>
+                                        <TextBox x:Name="MovementQuantityTextBox" Style="{StaticResource AdminTextBox}"/>
+                                        <TextBlock Text="Тип движения:" Style="{StaticResource FieldLabel}"/>
+                                        <ComboBox x:Name="MovementTypeComboBox" Style="{StaticResource AdminComboBox}">
+                                            <ComboBoxItem Content="IN"/>
+                                            <ComboBoxItem Content="OUT"/>
+                                        </ComboBox>
+                                        <TextBlock Text="Поставщик:" Style="{StaticResource FieldLabel}"/>
+                                        <ComboBox x:Name="MovementSupplierComboBox" Style="{StaticResource AdminComboBox}"
+                                                  DisplayMemberPath="SupplierName" SelectedValuePath="SupplierID"/>
+                                        <TextBlock Text="Сотрудник:" Style="{StaticResource FieldLabel}"/>
+                                        <ComboBox x:Name="MovementEmployeeComboBox" Style="{StaticResource AdminComboBox}"
+                                                  DisplayMemberPath="FullName" SelectedValuePath="EmployeeID"/>
+                                        <TextBlock Text="Примечания:" Style="{StaticResource FieldLabel}"/>
+                                        <TextBox x:Name="MovementNotesTextBox" Height="50" 
+                                                 Style="{StaticResource AdminTextBox}"
+                                                 TextWrapping="Wrap" AcceptsReturn="True" 
+                                                 VerticalScrollBarVisibility="Auto"
+                                                 Margin="0,0,0,10"/>
+                                        <Button Content="➕ Добавить" Click="AddMovementButton_Click" Style="{StaticResource AddButton}" Margin="0,5"/>
+                                        <Button Content="💾 Обновить" Click="UpdateMovementButton_Click" Style="{StaticResource UpdateButton}" Margin="0,5"/>
+                                        <Button Content="🗑️ Удалить" Click="DeleteMovementButton_Click" Style="{StaticResource DeleteButton}" Margin="0,5"/>
+                                        <Button Content="🧹 Очистить" Click="ClearMovementButton_Click" Style="{StaticResource ClearButton}" Margin="0,10,0,5"/>
+                                        <Button Content="🔄 Обновить список" Click="RefreshMovementButton_Click" Style="{StaticResource RefreshButton}" Margin="0,5"/>
+                                        <Button Content="📄 Сохранить Word" Click="SaveMovementsWordButton_Click" Style="{StaticResource WordButton}" Margin="0,10,0,5"/>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </Border>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="⚙️ Настройки">
+                        <Grid Background="Transparent">
+                            <Border Background="#FAFAFA" CornerRadius="15" 
+                                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                                    Padding="40,30">
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="10" ShadowDepth="1" Opacity="0.1"/>
+                                </Border.Effect>
+                                <StackPanel HorizontalAlignment="Center">
+                                    <TextBlock Text="🛠️" FontSize="48" HorizontalAlignment="Center" Margin="0,0,0,15"/>
+                                    <TextBlock Text="Дополнительные настройки" 
+                                               FontSize="18" FontWeight="SemiBold"
+                                               Foreground="#2D3748"
+                                               HorizontalAlignment="Center"/>
+                                    <TextBlock Text="Функции будут добавлены в будущих версиях" 
+                                               FontSize="14" Foreground="#718096"
+                                               HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </TabItem>
+                </TabControl>
+            </Border>
+        </Border>
     </Grid>
 </Window>

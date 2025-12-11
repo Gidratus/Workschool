@@ -5,39 +5,247 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp9"
         mc:Ignorable="d"
-        Title="Мой профиль" Height="500" Width="400" 
+        Title="Мой профиль" Height="580" Width="420" 
         WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
-    <Grid Background="#FFF5F5F5">
-        <StackPanel Margin="30">
-            <TextBlock Text="Редактирование профиля" FontSize="20" FontWeight="Bold" 
-                       HorizontalAlignment="Center" Margin="0,0,0,25"/>
-
-            <!-- Имя -->
-            <TextBlock Text="Имя:" Margin="0,10,0,5" FontSize="14"/>
-            <TextBox x:Name="FirstNameTextBox" Height="30" FontSize="14" Padding="5"/>
-
-            <!-- Фамилия -->
-            <TextBlock Text="Фамилия:" Margin="0,15,0,5" FontSize="14"/>
-            <TextBox x:Name="LastNameTextBox" Height="30" FontSize="14" Padding="5"/>
-
-            <TextBlock Text="Email:" Margin="0,15,0,5" FontSize="14"/>
-            <TextBox x:Name="EmailTextBox" Height="30" FontSize="14" Padding="5"/>
-
-            <TextBlock Text="Новый пароль:" Margin="0,15,0,5" FontSize="14"/>
-            <PasswordBox x:Name="PasswordBox" Height="30" FontSize="14" Padding="5"/>
-
-            <TextBlock Text="(оставьте пустым, чтобы не менять пароль)" 
-                       FontSize="11" Foreground="#888888" Margin="0,3,0,0"/>
-
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,25,0,0">
-                <Button Content="Сохранить" Click="SaveButton_Click" 
-                        Width="120" Height="35" FontSize="14"
-                        Background="#4CAF50" Foreground="White" BorderThickness="0" Margin="0,0,10,0"/>
-                <Button Content="Отмена" Click="CancelButton_Click" 
-                        Width="120" Height="35" FontSize="14"
-                        Background="#9E9E9E" Foreground="White" BorderThickness="0"/>
-            </StackPanel>
-        </StackPanel>
+    <Window.Resources>
+        <Style x:Key="ModernTextBox" TargetType="TextBox">
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="#2D3748"/>
+            <Setter Property="CaretBrush" Value="#2D3748"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="#FAFAFA"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8">
+                            <ScrollViewer x:Name="PART_ContentHost" 
+                                          VerticalAlignment="Center"
+                                          Margin="12,0"
+                                          Focusable="False"
+                                          HorizontalScrollBarVisibility="Hidden"
+                                          VerticalScrollBarVisibility="Hidden"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="BorderBrush" Value="#667EEA"/>
+                                <Setter Property="BorderThickness" Value="2"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" Value="#B0BEC5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ModernPasswordBox" TargetType="PasswordBox">
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="#2D3748"/>
+            <Setter Property="CaretBrush" Value="#2D3748"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="#FAFAFA"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="PasswordBox">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8">
+                            <ScrollViewer x:Name="PART_ContentHost" 
+                                          VerticalAlignment="Center"
+                                          Margin="12,0"
+                                          Focusable="False"
+                                          HorizontalScrollBarVisibility="Hidden"
+                                          VerticalScrollBarVisibility="Hidden"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="BorderBrush" Value="#667EEA"/>
+                                <Setter Property="BorderThickness" Value="2"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" Value="#B0BEC5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="SaveButton" TargetType="Button">
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" CornerRadius="8">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#4CAF50" Offset="0"/>
+                                    <GradientStop Color="#2E7D32" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#43A047" Offset="0"/>
+                                            <GradientStop Color="#1B5E20" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="CancelButton" TargetType="Button">
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" CornerRadius="8">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#78909C" Offset="0"/>
+                                    <GradientStop Color="#546E7A" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#607D8B" Offset="0"/>
+                                            <GradientStop Color="#455A64" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#667EEA" Offset="0"/>
+                <GradientStop Color="#764BA2" Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+        <Border Background="White" 
+                CornerRadius="20" 
+                Margin="25"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                Width="360">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="30" 
+                                  ShadowDepth="0" 
+                                  Opacity="0.3" 
+                                  Color="#000000"/>
+            </Border.Effect>
+            <ScrollViewer VerticalScrollBarVisibility="Auto" 
+                          HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Margin="30,25">
+                    <Border Background="#F0F4FF" 
+                            Width="70" Height="70" 
+                            CornerRadius="35" 
+                            HorizontalAlignment="Center"
+                            Margin="0,0,0,15">
+                        <TextBlock Text="✏️" 
+                                   FontSize="32" 
+                                   HorizontalAlignment="Center" 
+                                   VerticalAlignment="Center"/>
+                    </Border>
+                    <TextBlock Text="Редактирование профиля" 
+                               FontSize="20" 
+                               FontWeight="Bold" 
+                               HorizontalAlignment="Center"
+                               Foreground="#2D3748"
+                               Margin="0,0,0,20"/>
+                    <TextBlock Text="Имя" 
+                               FontSize="12" 
+                               FontWeight="SemiBold"
+                               Foreground="#4A5568"
+                               Margin="0,0,0,5"/>
+                    <TextBox x:Name="FirstNameTextBox" 
+                             Style="{StaticResource ModernTextBox}"
+                             Margin="0,0,0,12"/>
+                    <TextBlock Text="Фамилия" 
+                               FontSize="12" 
+                               FontWeight="SemiBold"
+                               Foreground="#4A5568"
+                               Margin="0,0,0,5"/>
+                    <TextBox x:Name="LastNameTextBox" 
+                             Style="{StaticResource ModernTextBox}"
+                             Margin="0,0,0,12"/>
+                    <TextBlock Text="Email" 
+                               FontSize="12" 
+                               FontWeight="SemiBold"
+                               Foreground="#4A5568"
+                               Margin="0,0,0,5"/>
+                    <TextBox x:Name="EmailTextBox" 
+                             Style="{StaticResource ModernTextBox}"
+                             Margin="0,0,0,12"/>
+                    <TextBlock Text="Новый пароль" 
+                               FontSize="12" 
+                               FontWeight="SemiBold"
+                               Foreground="#4A5568"
+                               Margin="0,0,0,5"/>
+                    <PasswordBox x:Name="PasswordBox" 
+                                 Style="{StaticResource ModernPasswordBox}"
+                                 Margin="0,0,0,5"/>
+                    <TextBlock Text="(оставьте пустым, чтобы не менять)" 
+                               FontSize="11" 
+                               Foreground="#A0AEC0"
+                               Margin="0,0,0,20"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0" 
+                                Content="💾 Сохранить" 
+                                Style="{StaticResource SaveButton}"
+                                Click="SaveButton_Click"/>
+                        <Button Grid.Column="2" 
+                                Content="✖ Отмена" 
+                                Style="{StaticResource CancelButton}"
+                                Click="CancelButton_Click"/>
+                    </Grid>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
     </Grid>
 </Window>
-

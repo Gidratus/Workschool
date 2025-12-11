@@ -10,29 +10,19 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using Microsoft.Data.SqlClient;
 using System.Windows.Shapes;
-
-
 namespace WpfApp9
 {
-    /// <summary>
-    /// Класс для хранения данных авторизованного пользователя
-    /// </summary>
     public class UserData
     {
         public int EmployeeId { get; set; }
         public string Position { get; set; }
     }
-
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         private const string ConnectionString = App.ConnectionString;
         private const string Sql = "select * from dbo.Categories";
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            //await LoadCategoriesAsync();
         }
         public MainWindow()
         {
@@ -58,16 +48,12 @@ namespace WpfApp9
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-            
-            // Получаем данные пользователя при авторизации (ID и должность)
             UserData userData = await AuthenticateUserAsync(
                 FirstnameTextbox.Text.Trim(),
                 LastNameTextBox.Text.Trim(),
                 PasswordTextbox.Password);
-
             if (userData != null)
             {
-                // Передаем данные пользователя в Window1
                 Window1 window1 = new Window1(userData);
                 window1.ShowDialog();
             }
@@ -77,31 +63,21 @@ namespace WpfApp9
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        /// <summary>
-        /// Аутентификация пользователя и получение его данных (ID и должность)
-        /// </summary>
-        /// <returns>UserData если авторизация успешна, null если нет</returns>
         private async Task<UserData> AuthenticateUserAsync(string firstName, string lastName, string password)
         {
             try
             {
                 await using var conn = new SqlConnection(ConnectionString);
                 await conn.OpenAsync();
-                
-                // Получаем EmployeeID и Position пользователя
                 string sql = @"SELECT EmployeeID, Position FROM dbo.Employees 
                               WHERE FirstName = @FirstName 
                               AND LastName = @LastName 
                               AND Password = @Password";
-                              
                 await using var cmd = new SqlCommand(sql, conn);
                 cmd.Parameters.AddWithValue("@FirstName", firstName);
                 cmd.Parameters.AddWithValue("@LastName", lastName);
                 cmd.Parameters.AddWithValue("@Password", password);
-                
                 await using var reader = await cmd.ExecuteReaderAsync();
-                
-                // Если пользователь найден, возвращаем его данные
                 if (await reader.ReadAsync())
                 {
                     return new UserData
@@ -110,7 +86,6 @@ namespace WpfApp9
                         Position = reader.IsDBNull(1) ? "" : reader.GetString(1)
                     };
                 }
-                
                 return null;
             }
             catch (SqlException ex)
@@ -122,12 +97,10 @@ namespace WpfApp9
                 return null;
             }
         }
-
         private void OpenRegWindowButton_Click(object sender, RoutedEventArgs e)
         {
             Reg reg = new Reg();
             reg.ShowDialog();
-            
         }
     }
 }

@@ -3,41 +3,22 @@ using System.Data;
 using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Data.SqlClient;
-
 namespace WpfApp9
 {
-    /// <summary>
-    /// Окно просмотра записей движений оборудования для текущего пользователя
-    /// </summary>
     public partial class MyMovementsWindow : Window
     {
         private const string ConnectionString = App.ConnectionString;
-
-        // ID текущего пользователя
         private readonly int _employeeId;
-
-        /// <summary>
-        /// Конструктор окна просмотра записей
-        /// </summary>
-        /// <param name="employeeId">ID пользователя для фильтрации записей</param>
         public MyMovementsWindow(int employeeId)
         {
             InitializeComponent();
             _employeeId = employeeId;
             Loaded += MyMovementsWindow_Loaded;
         }
-
-        /// <summary>
-        /// Загрузка данных при открытии окна
-        /// </summary>
         private async void MyMovementsWindow_Loaded(object sender, RoutedEventArgs e)
         {
             await LoadMovementsAsync();
         }
-
-        /// <summary>
-        /// Загрузка записей движений оборудования для текущего пользователя
-        /// </summary>
         private async Task LoadMovementsAsync()
         {
             try
@@ -45,10 +26,6 @@ namespace WpfApp9
                 var dt = new DataTable();
                 await using var conn = new SqlConnection(ConnectionString);
                 await conn.OpenAsync();
-
-                // SQL-запрос для получения записей движений с JOIN для имен оборудования и поставщика
-                // Фильтруем по EmployeeID текущего пользователя
-                // Включаем MovementID для идентификации записей и Isdone для отметки выполнения
                 string sql = @"SELECT m.MovementID, m.Isdone, e.EquipmentName, m.MovementDate, m.Quantity, m.MovementType, 
                               s.SupplierName, m.Notes
                               FROM dbo.EquipmentMovement m
@@ -56,10 +33,8 @@ namespace WpfApp9
                               LEFT JOIN dbo.Suppliers s ON m.SupplierID = s.SupplierID
                               WHERE m.EmployeeID = @EmployeeID
                               ORDER BY m.MovementDate DESC";
-
                 await using var cmd = new SqlCommand(sql, conn);
                 cmd.Parameters.AddWithValue("@EmployeeID", _employeeId);
-
                 await using var reader = await cmd.ExecuteReaderAsync();
                 dt.Load(reader);
                 MovementsDataGrid.ItemsSource = dt.DefaultView;
@@ -75,37 +50,25 @@ namespace WpfApp9
                     "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-        /// <summary>
-        /// Сохранение изменений статуса выполнения задач
-        /// </summary>
         private async void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                // Получаем DataTable из DataGrid
                 var dataView = MovementsDataGrid.ItemsSource as DataView;
                 if (dataView == null) return;
-
                 await using var conn = new SqlConnection(ConnectionString);
                 await conn.OpenAsync();
-
                 int updatedCount = 0;
-
-                // Перебираем все строки и обновляем статус Isdone
                 foreach (DataRowView row in dataView)
                 {
                     int movementId = Convert.ToInt32(row["MovementID"]);
                     bool isDone = row["Isdone"] != DBNull.Value && Convert.ToBoolean(row["Isdone"]);
-
                     string sql = "UPDATE dbo.EquipmentMovement SET Isdone = @Isdone WHERE MovementID = @MovementID";
                     await using var cmd = new SqlCommand(sql, conn);
                     cmd.Parameters.AddWithValue("@Isdone", isDone);
                     cmd.Parameters.AddWithValue("@MovementID", movementId);
-
                     updatedCount += await cmd.ExecuteNonQueryAsync();
                 }
-
                 MessageBox.Show($"Изменения сохранены! Обновлено записей: {updatedCount}",
                     "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
             }
@@ -120,14 +83,9 @@ namespace WpfApp9
                     "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-        /// <summary>
-        /// Закрытие окна
-        /// </summary>
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             Close();
         }
     }
 }
-

@@ -1,59 +1,215 @@
 <Window x:Class="WpfApp9.WorkConfirmationWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Подтверждение работ" Height="500" Width="900" 
+        Title="Подтверждение работ" Height="600" Width="1000" 
         WindowStartupLocation="CenterOwner">
-    <Grid Background="#FFF5F5F5">
+    <Window.Resources>
+        <Style x:Key="SaveButton" TargetType="Button">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="20,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#4CAF50" Offset="0"/>
+                                    <GradientStop Color="#2E7D32" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#43A047" Offset="0"/>
+                                            <GradientStop Color="#1B5E20" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="RefreshButton" TargetType="Button">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="20,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#FF9800" Offset="0"/>
+                                    <GradientStop Color="#F57C00" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#FB8C00" Offset="0"/>
+                                            <GradientStop Color="#EF6C00" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="CloseButton" TargetType="Button">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="20,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#667EEA" Offset="0"/>
+                                    <GradientStop Color="#764BA2" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#5A6FD6" Offset="0"/>
+                                            <GradientStop Color="#6A4190" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="#F5F7FA" Offset="0"/>
+                <GradientStop Color="#E8EAF6" Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-
-        <!-- Заголовок окна -->
-        <TextBlock Grid.Row="0" Text="Подтверждение выполненных работ" 
-                   FontSize="22" FontWeight="Bold" 
-                   HorizontalAlignment="Center" Margin="0,15,0,10"/>
-
-        <!-- Подсказка для менеджера -->
-        <TextBlock Grid.Row="1" 
-                   Text="Здесь отображаются работы, отмеченные стажерами как выполненные." 
-                   FontSize="12" Foreground="#666666"
-                   HorizontalAlignment="Center" Margin="0,0,0,10"/>
-
-        <!-- DataGrid для отображения записей -->
-        <DataGrid x:Name="ConfirmationDataGrid" 
-                  Grid.Row="2"
-                  AutoGenerateColumns="False" 
-                  CanUserAddRows="False"
-                  CanUserDeleteRows="False"
-                  Margin="15,0,15,15"
-                  Background="White"
-                  SelectionMode="Single">
-            <DataGrid.Columns>
-                <DataGridCheckBoxColumn Header="Подтверждено" Binding="{Binding isAdmindone}" Width="100"/>
-                <DataGridCheckBoxColumn Header="Выполнено" Binding="{Binding Isdone}" Width="100" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Оборудование" Binding="{Binding EquipmentName}" Width="*" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Сотрудник" Binding="{Binding EmployeeName}" Width="120" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Дата" Binding="{Binding MovementDate}" Width="100" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Кол-во" Binding="{Binding Quantity}" Width="60" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Тип" Binding="{Binding MovementType}" Width="80" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Примечания" Binding="{Binding Notes}" Width="*" IsReadOnly="True"/>
-            </DataGrid.Columns>
-        </DataGrid>
-
-        <!-- Кнопки -->
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,15">
-            <Button Content="Сохранить" Click="SaveConfirmationsButton_Click" 
-                    Width="120" Height="35" Margin="0,0,10,0"
-                    Background="#4CAF50" Foreground="White"/>
-            <Button Content="Обновить" Click="RefreshButton_Click" 
-                    Width="100" Height="35" Margin="0,0,10,0"
-                    Background="#FF9800" Foreground="White"/>
-            <Button Content="Закрыть" Click="CloseButton_Click" 
-                    Width="100" Height="35"
-                    Background="#2196F3" Foreground="White"/>
-        </StackPanel>
+        <Border Grid.Row="0" Margin="20,20,20,10">
+            <Border Background="White" CornerRadius="15" Padding="20,15">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="15" ShadowDepth="2" Opacity="0.1" Color="#000000"/>
+                </Border.Effect>
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="✅ Подтверждение выполненных работ" 
+                               FontSize="24" FontWeight="Bold" 
+                               HorizontalAlignment="Center"
+                               Foreground="#2D3748"/>
+                    <TextBlock Text="Здесь отображаются работы, отмеченные стажерами как выполненные" 
+                               FontSize="13" 
+                               HorizontalAlignment="Center"
+                               Foreground="#718096"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+        </Border>
+        <Border Grid.Row="1" Margin="20,0,20,10">
+            <Border Background="White" CornerRadius="15" Padding="15">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="15" ShadowDepth="2" Opacity="0.1" Color="#000000"/>
+                </Border.Effect>
+                <DataGrid x:Name="ConfirmationDataGrid" 
+                          AutoGenerateColumns="False" 
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          Background="Transparent"
+                          BorderThickness="0"
+                          SelectionMode="Single"
+                          GridLinesVisibility="Horizontal"
+                          HorizontalGridLinesBrush="#F0F0F0"
+                          RowBackground="White"
+                          AlternatingRowBackground="#FAFAFA">
+                    <DataGrid.Columns>
+                        <DataGridCheckBoxColumn Header="✅ Подтверждено" 
+                                                Binding="{Binding isAdmindone}" 
+                                                Width="110"/>
+                        <DataGridCheckBoxColumn Header="📋 Выполнено" 
+                                                Binding="{Binding Isdone}" 
+                                                Width="100" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="🔧 Оборудование" 
+                                            Binding="{Binding EquipmentName}" 
+                                            Width="*" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="👤 Сотрудник" 
+                                            Binding="{Binding EmployeeName}" 
+                                            Width="130" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="📅 Дата" 
+                                            Binding="{Binding MovementDate}" 
+                                            Width="100" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="📦 Кол-во" 
+                                            Binding="{Binding Quantity}" 
+                                            Width="70" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="🔄 Тип" 
+                                            Binding="{Binding MovementType}" 
+                                            Width="80" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="📝 Примечания" 
+                                            Binding="{Binding Notes}" 
+                                            Width="*" IsReadOnly="True"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+        </Border>
+        <Border Grid.Row="2" Margin="20,0,20,20">
+            <Border Background="White" CornerRadius="15" Padding="20,15">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="15" ShadowDepth="2" Opacity="0.1" Color="#000000"/>
+                </Border.Effect>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Content="💾 Сохранить" 
+                            Style="{StaticResource SaveButton}"
+                            Click="SaveConfirmationsButton_Click"
+                            Margin="0,0,10,0"/>
+                    <Button Content="🔄 Обновить" 
+                            Style="{StaticResource RefreshButton}"
+                            Click="RefreshButton_Click"
+                            Margin="0,0,10,0"/>
+                    <Button Content="✖ Закрыть" 
+                            Style="{StaticResource CloseButton}"
+                            Click="CloseButton_Click"/>
+                </StackPanel>
+            </Border>
+        </Border>
     </Grid>
 </Window>

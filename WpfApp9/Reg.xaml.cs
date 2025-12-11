@@ -12,27 +12,17 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Microsoft.Data.SqlClient;
-
-
 namespace WpfApp9
 {
-    /// <summary>
-    /// Логика взаимодействия для Reg.xaml
-    /// </summary>
     public partial class Reg : Window
     {
         private const string ConnectionString = App.ConnectionString;
-
         public Reg()
         {
             InitializeComponent();
         }
         private async void RegisterButton_Click(object sender, RoutedEventArgs e)
         {
-            //if (!ValidateInput())
-            //{
-            //    return;
-            //}
             if (PasswordBox.Password != SecondPasswordBox.Password)
             {
                 MessageBox.Show("Пароли не совпадают!", "Ошибка",

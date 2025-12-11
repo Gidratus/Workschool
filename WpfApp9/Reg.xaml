@@ -8,10 +8,7 @@
         Title="Регистрация" Height="650" Width="500"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize">
-    
-    <!-- Ресурсы окна - стили для элементов -->
     <Window.Resources>
-        <!-- Стиль для текстовых полей ввода -->
         <Style x:Key="ModernTextBox" TargetType="TextBox">
             <Setter Property="Height" Value="42"/>
             <Setter Property="FontSize" Value="14"/>
@@ -29,7 +26,6 @@
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 CornerRadius="8">
-                            <!-- Контейнер для текста -->
                             <ScrollViewer x:Name="PART_ContentHost" 
                                           VerticalAlignment="Center"
                                           Margin="12,0"
@@ -38,12 +34,10 @@
                                           VerticalScrollBarVisibility="Hidden"/>
                         </Border>
                         <ControlTemplate.Triggers>
-                            <!-- Эффект при фокусе на поле -->
                             <Trigger Property="IsFocused" Value="True">
                                 <Setter Property="BorderBrush" Value="#4CAF50"/>
                                 <Setter Property="BorderThickness" Value="2"/>
                             </Trigger>
-                            <!-- Эффект при наведении мыши -->
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="BorderBrush" Value="#81C784"/>
                             </Trigger>
@@ -52,8 +46,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        
-        <!-- Стиль для полей ввода пароля -->
         <Style x:Key="ModernPasswordBox" TargetType="PasswordBox">
             <Setter Property="Height" Value="42"/>
             <Setter Property="FontSize" Value="14"/>
@@ -71,7 +63,6 @@
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 CornerRadius="8">
-                            <!-- Контейнер для текста пароля -->
                             <ScrollViewer x:Name="PART_ContentHost" 
                                           VerticalAlignment="Center"
                                           Margin="12,0"
@@ -80,12 +71,10 @@
                                           VerticalScrollBarVisibility="Hidden"/>
                         </Border>
                         <ControlTemplate.Triggers>
-                            <!-- Эффект при фокусе на поле -->
                             <Trigger Property="IsFocused" Value="True">
                                 <Setter Property="BorderBrush" Value="#4CAF50"/>
                                 <Setter Property="BorderThickness" Value="2"/>
                             </Trigger>
-                            <!-- Эффект при наведении мыши -->
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="BorderBrush" Value="#81C784"/>
                             </Trigger>
@@ -94,8 +83,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        
-        <!-- Стиль для основной кнопки регистрации -->
         <Style x:Key="PrimaryButton" TargetType="Button">
             <Setter Property="Height" Value="50"/>
             <Setter Property="FontSize" Value="16"/>
@@ -107,7 +94,6 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="border" CornerRadius="8">
-                            <!-- Градиентный фон кнопки -->
                             <Border.Background>
                                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                                     <GradientStop Color="#4CAF50" Offset="0"/>
@@ -118,7 +104,6 @@
                                               VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
-                            <!-- Эффект при наведении мыши -->
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="border" Property="Background">
                                     <Setter.Value>
@@ -129,7 +114,6 @@
                                     </Setter.Value>
                                 </Setter>
                             </Trigger>
-                            <!-- Эффект при нажатии -->
                             <Trigger Property="IsPressed" Value="True">
                                 <Setter TargetName="border" Property="Background">
                                     <Setter.Value>
@@ -146,36 +130,27 @@
             </Setter>
         </Style>
     </Window.Resources>
-    
-    <!-- Основной контейнер с градиентным фоном -->
     <Grid>
-        <!-- Градиентный фон окна -->
         <Grid.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                 <GradientStop Color="#4CAF50" Offset="0"/>
                 <GradientStop Color="#2E7D32" Offset="1"/>
             </LinearGradientBrush>
         </Grid.Background>
-        
-        <!-- Белая карточка формы регистрации -->
         <Border Background="White" 
                 CornerRadius="20" 
                 Margin="40"
                 VerticalAlignment="Center"
                 HorizontalAlignment="Center"
                 Width="400">
-            <!-- Тень карточки -->
             <Border.Effect>
                 <DropShadowEffect BlurRadius="30" 
                                   ShadowDepth="0" 
                                   Opacity="0.3" 
                                   Color="#000000"/>
             </Border.Effect>
-            
-            <!-- Скроллируемое содержимое формы -->
             <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="550">
                 <StackPanel Margin="35,30">
-                    <!-- Иконка регистрации -->
                     <Border Background="#E8F5E9" 
                             Width="70" Height="70" 
                             CornerRadius="35" 
@@ -186,23 +161,17 @@
                                    HorizontalAlignment="Center" 
                                    VerticalAlignment="Center"/>
                     </Border>
-                    
-                    <!-- Заголовок формы -->
                     <TextBlock Text="Создать аккаунт" 
                                FontSize="22" 
                                FontWeight="Bold" 
                                HorizontalAlignment="Center"
                                Foreground="#2D3748"
                                Margin="0,0,0,5"/>
-                    
-                    <!-- Подзаголовок формы -->
                     <TextBlock Text="Заполните данные для регистрации" 
                                FontSize="13" 
                                HorizontalAlignment="Center"
                                Foreground="#718096"
                                Margin="0,0,0,25"/>
-                    
-                    <!-- Контейнер для двух колонок полей -->
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -214,8 +183,6 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        
-                        <!-- Левая колонка: Имя -->
                         <StackPanel Grid.Column="0" Grid.Row="0" Margin="0,0,0,12">
                             <TextBlock Text="Имя" 
                                        FontSize="12" 
@@ -225,8 +192,6 @@
                             <TextBox x:Name="FirstNameTextBox" 
                                      Style="{StaticResource ModernTextBox}"/>
                         </StackPanel>
-                        
-                        <!-- Правая колонка: Фамилия -->
                         <StackPanel Grid.Column="2" Grid.Row="0" Margin="0,0,0,12">
                             <TextBlock Text="Фамилия" 
                                        FontSize="12" 
@@ -236,8 +201,6 @@
                             <TextBox x:Name="LastNameTextBox" 
                                      Style="{StaticResource ModernTextBox}"/>
                         </StackPanel>
-                        
-                        <!-- Левая колонка: Email -->
                         <StackPanel Grid.Column="0" Grid.Row="1" Margin="0,0,0,12">
                             <TextBlock Text="Email" 
                                        FontSize="12" 
@@ -247,8 +210,6 @@
                             <TextBox x:Name="EmailTextBox" 
                                      Style="{StaticResource ModernTextBox}"/>
                         </StackPanel>
-                        
-                        <!-- Правая колонка: Телефон -->
                         <StackPanel Grid.Column="2" Grid.Row="1" Margin="0,0,0,12">
                             <TextBlock Text="Телефон" 
                                        FontSize="12" 
@@ -258,8 +219,6 @@
                             <TextBox x:Name="PhoneTextBox" 
                                      Style="{StaticResource ModernTextBox}"/>
                         </StackPanel>
-                        
-                        <!-- Левая колонка: Пароль -->
                         <StackPanel Grid.Column="0" Grid.Row="2" Margin="0,0,0,12">
                             <TextBlock Text="Пароль" 
                                        FontSize="12" 
@@ -269,8 +228,6 @@
                             <PasswordBox x:Name="PasswordBox" 
                                          Style="{StaticResource ModernPasswordBox}"/>
                         </StackPanel>
-                        
-                        <!-- Правая колонка: Повторить пароль -->
                         <StackPanel Grid.Column="2" Grid.Row="2" Margin="0,0,0,12">
                             <TextBlock Text="Повторите пароль" 
                                        FontSize="12" 
@@ -281,15 +238,11 @@
                                          Style="{StaticResource ModernPasswordBox}"/>
                         </StackPanel>
                     </Grid>
-                    
-                    <!-- Кнопка регистрации -->
                     <Button x:Name="RegisterTextButton"
                             Content="Зарегистрироваться" 
                             Style="{StaticResource PrimaryButton}"
                             Click="RegisterButton_Click"
                             Margin="0,20,0,10"/>
-                    
-                    <!-- Текст внизу формы -->
                     <TextBlock HorizontalAlignment="Center" Margin="0,10,0,0">
                         <Run Text="Уже есть аккаунт? " Foreground="#718096"/>
                         <Run Text="Войти" Foreground="#4CAF50" FontWeight="SemiBold"/>
