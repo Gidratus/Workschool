@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:WpfApp9"
         mc:Ignorable="d"
         Title="Мои записи" Height="550" Width="900"
-        Icon="ico.ico" 
+        Icon="/ico.ico" 
         WindowStartupLocation="CenterOwner" ResizeMode="CanResize">
     <Window.Resources>
         <Style x:Key="SaveButton" TargetType="Button">

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:WpfApp9"
         mc:Ignorable="d"
         Title="Административная Панель" Height="700" Width="1050"
-        Icon="ico.ico"
+        Icon="/ico.ico"
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <Style x:Key="AddButton" TargetType="Button">

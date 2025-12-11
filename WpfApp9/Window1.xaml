@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:WpfApp9"
         mc:Ignorable="d"
         Title="Панель просмотра" Height="550" Width="900"
-        Icon="ico.ico"
+        Icon="/ico.ico"
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <Style x:Key="NavButton" TargetType="Button">

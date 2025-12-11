@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:WpfApp9"
         mc:Ignorable="d"
         Title="Мой профиль" Height="580" Width="420"
-        Icon="ico.ico" 
+        Icon="/ico.ico" 
         WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
     <Window.Resources>
         <Style x:Key="ModernTextBox" TargetType="TextBox">
