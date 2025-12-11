@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:WpfApp9"
         mc:Ignorable="d"
         Title="Панель просмотра" Height="550" Width="900"
+        Icon="ico.ico"
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <Style x:Key="NavButton" TargetType="Button">
@@ -144,38 +145,48 @@
                     <DropShadowEffect BlurRadius="15" ShadowDepth="2" Opacity="0.1" Color="#000000"/>
                 </Border.Effect>
                 <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0" Orientation="Horizontal">
-                        <Button Content="👤 Профиль" 
-                                Style="{StaticResource NavButton}"
-                                Click="OpenMyMovementsButton_Click"
-                                Margin="0,0,10,0"/>
-                        <Button Content="✏️ Редактировать профиль" 
-                                Style="{StaticResource NavButton}"
-                                Click="OpenProfileButton_Click"/>
-                    </StackPanel>
-                    <TextBlock Grid.Column="1" 
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    
+                    <TextBlock Grid.Row="0" 
                                Text="📊 Панель просмотра данных" 
-                               FontSize="20" 
+                               FontSize="22" 
                                FontWeight="Bold"
                                Foreground="#2D3748"
                                HorizontalAlignment="Center"
-                               VerticalAlignment="Center"/>
-                    <StackPanel Grid.Column="2" Orientation="Horizontal">
-                        <Button x:Name="WorkConfirmationButton" 
-                                Content="✅ Подтверждение работ" 
-                                Style="{StaticResource AdminButton}"
-                                Click="Button_Click"
-                                Margin="0,0,10,0"/>
-                        <Button x:Name="AdminAccessButton" 
-                                Content="⚙️ Панель управления" 
-                                Style="{StaticResource AdminButton}"
-                                Click="OpenAdminWindowButton_Click"/>
-                    </StackPanel>
+                               Margin="0,0,0,12"/>
+                    
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <StackPanel Grid.Column="0" Orientation="Horizontal">
+                            <Button Content="👤 Профиль" 
+                                    Style="{StaticResource NavButton}"
+                                    Click="OpenMyMovementsButton_Click"
+                                    Margin="0,0,10,0"/>
+                            <Button Content="✏️ Редактировать" 
+                                    Style="{StaticResource NavButton}"
+                                    Click="OpenProfileButton_Click"/>
+                        </StackPanel>
+                        
+                        <StackPanel Grid.Column="2" Orientation="Horizontal">
+                            <Button x:Name="WorkConfirmationButton" 
+                                    Content="✅ Подтверждение" 
+                                    Style="{StaticResource AdminButton}"
+                                    Click="Button_Click"
+                                    Margin="0,0,10,0"/>
+                            <Button x:Name="AdminAccessButton" 
+                                    Content="⚙️ Управление" 
+                                    Style="{StaticResource AdminButton}"
+                                    Click="OpenAdminWindowButton_Click"/>
+                        </StackPanel>
+                    </Grid>
                 </Grid>
             </Border>
         </Border>
